@@ -3,227 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎁 English Adventure 🇬🇧 🦄</title>
+    <title>English Adventure 🇬🇧</title>
     <style>
-        :root {
-            --bg-color: #fdf6e3;
-            --primary-color: #ff85a2;
-            --secondary-color: #4ecdc4;
-            --accent-color: #ffe66d;
-            --text-color: #2d3436;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            user-select: none;
-        }
-
-        #app { width: 100%; max-width: 600px; padding: 20px; box-sizing: border-box; text-align: center; }
+        :root { --bg: #fdf6e3; --p: #ff85a2; --s: #4ecdc4; --txt: #2d3436; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--txt); margin: 0; text-align: center; user-select: none; }
+        #app { width: 100%; max-width: 600px; margin: auto; padding: 20px; box-sizing: border-box; }
         .screen { display: none; }
-        .screen.active { display: block; animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        button {
-            background-color: var(--secondary-color);
-            border: none;
-            border-radius: 20px;
-            padding: 15px;
-            font-size: 1.1rem;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            margin: 8px;
-            box-shadow: 0 4px #3baea5;
-            width: 85%;
-            transition: all 0.1s;
-        }
-
-        button:active { transform: translateY(3px); box-shadow: 0 1px #3baea5; }
-        button.primary { background-color: var(--primary-color); box-shadow: 0 4px #e06d8a; }
-        button.save { background-color: #27ae60; box-shadow: 0 4px #1e8449; }
-
-        .uk-flag { width: 35px; vertical-align: middle; margin: 0 8px; border-radius: 3px; }
-        select { padding: 12px; border-radius: 10px; border: 2px solid var(--secondary-color); font-size: 1.1rem; width: 80%; margin: 20px 0; }
-        input[type="text"] { padding: 15px; border-radius: 15px; border: 3px solid var(--secondary-color); font-size: 1.2rem; width: 80%; text-align: center; outline: none; margin-bottom: 10px; }
-
-        /* Album */
-        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; margin-top: 20px; }
-        .sticker { aspect-ratio: 1/1; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px solid #ddd; overflow: hidden; font-size: 0.8rem; }
+        .active { display: block; }
+        button { background: var(--s); border: none; border-radius: 15px; padding: 15px; color: white; font-weight: bold; cursor: pointer; margin: 8px; width: 85%; box-shadow: 0 4px #3baea5; font-size: 1.1rem; }
+        button:active { transform: translateY(2px); box-shadow: 0 2px #3baea5; }
+        button.primary { background: var(--p); box-shadow: 0 4px #e06d8a; }
+        button.save { background: #27ae60; box-shadow: 0 4px #1e8449; }
+        input { padding: 15px; border-radius: 10px; border: 2px solid var(--s); width: 80%; font-size: 1.2rem; text-align: center; }
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; margin-top: 20px; }
+        .sticker { aspect-ratio: 1/1; background: white; border: 1px solid #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 0.7rem; }
         .sticker img { width: 100%; height: 100%; object-fit: cover; }
-        .sticker.locked { background: #eee; color: #bbb; }
-        .admin-editing .sticker { cursor: pointer; border: 2px dashed var(--primary-color) !important; }
-
-        /* Matching */
-        .matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .match-card { background: white; padding: 15px 10px; border-radius: 12px; border: 3px solid #ddd; cursor: pointer; font-weight: bold; min-height: 55px; display: flex; align-items: center; justify-content: center; }
-        .match-card.selected { border-color: var(--primary-color); background-color: #fff0f3; }
-        .match-card.correct { border-color: var(--secondary-color); background-color: #e8faf8; color: #aaa; cursor: default; }
-        .match-card.wrong { border-color: #ff6b6b; animation: shake 0.3s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        .feedback-msg { font-size: 1.3rem; font-weight: bold; margin: 15px 0; min-height: 30px; }
+        .sticker.locked { background: #eee; color: #999; }
+        .admin-editing .sticker { cursor: pointer; border: 2px dashed var(--p); }
+        .matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .match-card { background: white; padding: 15px 5px; border: 2px solid #ddd; border-radius: 10px; cursor: pointer; min-height: 50px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .match-card.selected { border-color: var(--p); background: #fff0f3; }
+        .match-card.correct { border-color: var(--s); background: #e8faf8; color: #ccc; }
     </style>
 </head>
 <body>
 
 <div id="app">
     <div id="menu" class="screen active">
-        <h1>🎁 English Adventure <img class="uk-flag" src="https://upload.wikimedia.org/wikipedia/commons/8/83/Flag_of_the_United_Kingdom_%283-5%29.svg" alt="UK"> 🦄</h1>
-        <button class="primary" onclick="window.startGame(1)">1. Traducció ✍️</button>
-        <button class="primary" onclick="window.startGame(2)">2. Quiz 🤔</button>
-        <button class="primary" onclick="window.startGame(3)">3. Escolta 🎧</button>
-        <button class="primary" onclick="window.startGame(4)">4. Parelles 🔗</button>
-        <hr style="margin: 20px; border: 0; border-top: 2px dashed #ccc;">
-        <button onclick="window.goToScreen('config')">Configuració ⚙️</button>
-        <button onclick="window.openAlbum()">El meu Àlbum 📸</button>
+        <h1>🎁 English Adventure 🦄</h1>
+        <button class="primary" onclick="startGame(1)">1. Traducció ✍️</button>
+        <button class="primary" onclick="startGame(2)">2. Quiz 🤔</button>
+        <button class="primary" onclick="startGame(3)">3. Escolta 🎧</button>
+        <button class="primary" onclick="startGame(4)">4. Parelles 🔗</button>
+        <hr>
+        <button onclick="goToScreen('config')">Configuració ⚙️</button>
+        <button onclick="openAlbum()">Àlbum 📸</button>
     </div>
 
     <div id="config" class="screen">
         <h2>Configuració ⚙️</h2>
-        <p>Paraules per cada tema:</p>
-        <select id="words-per-cat">
-            <option value="1">1 paraula</option>
-            <option value="2">2 paraules</option>
-            <option value="3">3 paraules</option>
-            <option value="5">5 paraules</option>
-            <option value="8">8 paraules</option>
-            <option value="12">12 paraules</option>
+        <p>Paraules per tema:</p>
+        <select id="selLimit" style="padding:10px; font-size:1.2rem; width:80%">
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            <option value="5">5</option><option value="8">8</option><option value="12">12</option>
         </select>
-        <button class="save" onclick="window.saveConfig()">Guardar Canvis</button>
-        <button onclick="window.goToScreen('menu')">Tornar</button>
+        <br><br>
+        <button class="save" onclick="saveConfig()">Guardar</button>
     </div>
 
     <div id="game" class="screen">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <button style="width:50px; padding:5px; margin:0;" onclick="window.goToScreen('menu')">🏠</button>
-            <div id="progress-text">0 / 0</div>
-            <div id="lives-text">❌: 0</div>
+        <div style="display:flex; justify-content: space-between; margin-bottom:10px">
+            <button style="width:50px; margin:0" onclick="goToScreen('menu')">🏠</button>
+            <div id="prog">0/0</div>
+            <div id="errs">❌: 0</div>
         </div>
-        <h2 id="mode-title"></h2>
-        <div id="game-content"></div>
-        <div id="feedback" class="feedback-msg"></div>
+        <h2 id="mTitle"></h2>
+        <div id="gCont"></div>
+        <div id="fb" style="font-weight:bold; margin:15px; min-height:20px"></div>
     </div>
 
     <div id="album" class="screen">
-        <h2 id="album-title">Àlbum de Cromos 🏆</h2>
-        <p id="stats-text"></p>
-        <button id="save-admin-btn" style="display:none;" class="save" onclick="window.exitAdmin()">💾 Guardar Canvis</button>
-        <div class="gallery" id="sticker-gallery"></div>
-        <div id="album-controls" style="margin-top:20px;">
-            <button class="primary" onclick="window.goToScreen('menu')">Inici 🏠</button>
+        <h2 id="aTitle">El meu Àlbum 🏆</h2>
+        <button id="btnSaveAdmin" class="save" style="display:none" onclick="exitAdmin()">💾 Guardar Canvis</button>
+        <div class="gallery" id="gal"></div>
+        <div id="aCtrl" style="margin-top:20px">
+            <button class="primary" onclick="goToScreen('menu')">Tornar 🏠</button>
             <br><br>
-            <small style="color:#ccc; cursor:pointer" onclick="window.enterAdmin()">🔒 Admin</small>
+            <small style="color:#ccc; cursor:pointer" onclick="enterAdmin()">🔒 Admin</small>
         </div>
     </div>
 </div>
 
 <script>
-    // VOCABULARI
-    const vocabulary = [
-        { cat: "COLORS", words: [{en:"red", ca:"vermell"}, {en:"orange", ca:"taronja"}, {en:"yellow", ca:"groc"}, {en:"green", ca:"verd"}, {en:"blue", ca:"blau"}, {en:"purple", ca:"lila"}, {en:"pink", ca:"rosa"}, {en:"brown", ca:"marró"}, {en:"white", ca:"blanc"}, {en:"black", ca:"negre"}]},
-        { cat: "NUMBERS", words: [{en:"one", ca:"u"}, {en:"two", ca:"dos"}, {en:"three", ca:"tres"}, {en:"four", ca:"quatre"}, {en:"five", ca:"cinc"}, {en:"six", ca:"sis"}, {en:"seven", ca:"set"}, {en:"eight", ca:"vuit"}, {en:"nine", ca:"nou"}, {en:"ten", ca:"deu"}, {en:"eleven", ca:"onze"}, {en:"twelve", ca:"dotze"}, {en:"thirteen", ca:"tretze"}, {en:"fourteen", ca:"catorze"}, {en:"fifteen", ca:"quinze"}, {en:"sixteen", ca:"setze"}, {en:"seventeen", ca:"disset"}, {en:"eighteen", ca:"divuit"}, {en:"nineteen", ca:"dinou"}, {en:"twenty", ca:"vint"}]},
-        { cat: "DAYS", words: [{en:"monday", ca:"dilluns"}, {en:"tuesday", ca:"dimarts"}, {en:"wednesday", ca:"dimecres"}, {en:"thursday", ca:"dijous"}, {en:"friday", ca:"divendres"}, {en:"saturday", ca:"dissabte"}, {en:"sunday", ca:"diumenge"}, {en:"weekend", ca:"cap de setmana"}]},
-        { cat: "MONTHS", words: [{en:"january", ca:"gener"}, {en:"february", ca:"febrer"}, {en:"march", ca:"març"}, {en:"april", ca:"abril"}, {en:"may", ca:"maig"}, {en:"june", ca:"juny"}, {en:"july", ca:"juliol"}, {en:"august", ca:"agost"}, {en:"september", ca:"septembre"}, {en:"october", ca:"octubre"}, {en:"november", ca:"novembre"}, {en:"december", ca:"desembre"}]},
-        { cat: "WEATHER", words: [{en:"sunny", ca:"assolellat"}, {en:"cloudy", ca:"nuvolat"}, {en:"windy", ca:"ventós"}, {en:"stormy", ca:"tempesta"}, {en:"rainy", ca:"plujós"}, {en:"snowy", ca:"neu"}, {en:"hot", ca:"calor"}, {en:"cold", ca:"fred"}]},
-        { cat: "CLASSROOM", words: [{en:"pencil", ca:"llapis"}, {en:"pen", ca:"bolígraf"}, {en:"rubber", ca:"goma d'esborrar"}, {en:"pencil sharpener", ca:"maquineta"}, {en:"glue", ca:"barra d'enganxar"}, {en:"scissors", ca:"tisores"}, {en:"ruler", ca:"regle"}, {en:"coloured pencil", ca:"llapis de colors"}, {en:"markers", ca:"retoladors"}]}
+    // Variables de estado
+    const vocab = [
+        { c: "COLORS", w: [{e:"red", k:"vermell"}, {e:"green", k:"verd"}, {e:"blue", k:"blau"}, {e:"yellow", k:"groc"}, {e:"orange", k:"taronja"}, {e:"purple", k:"lila"}, {e:"pink", k:"rosa"}, {e:"brown", k:"marró"}, {e:"black", k:"negre"}, {e:"white", k:"blanc"}]},
+        { c: "NUMBERS", w: [{e:"one", k:"u"}, {e:"two", k:"dos"}, {e:"three", k:"tres"}, {e:"four", k:"quatre"}, {e:"five", k:"cinc"}, {e:"six", k:"sis"}, {e:"seven", k:"set"}, {e:"eight", k:"vuit"}, {e:"nine", k:"nou"}, {e:"ten", k:"deu"}]},
+        { c: "DAYS", w: [{e:"monday", k:"dilluns"}, {e:"tuesday", k:"dimarts"}, {e:"wednesday", k:"dimecres"}, {e:"thursday", k:"dijous"}, {e:"friday", k:"divendres"}, {e:"saturday", k:"dissabte"}, {e:"sunday", k:"diumenge"}]},
+        { c: "MONTHS", w: [{e:"january", k:"gener"}, {e:"february", k:"febrer"}, {e:"march", k:"març"}, {e:"april", k:"abril"}, {e:"may", k:"maig"}, {e:"june", k:"juny"}, {e:"july", k:"juliol"}, {e:"august", k:"agost"}, {e:"september", k:"setembre"}, {e:"october", k:"octubre"}, {e:"november", k:"novembre"}, {e:"december", k:"desembre"}]},
+        { c: "WEATHER", w: [{e:"sunny", k:"assolellat"}, {e:"cloudy", k:"nuvolat"}, {e:"windy", k:"ventós"}, {e:"rainy", k:"plujós"}, {e:"cold", k:"fred"}, {e:"hot", k:"calor"}]},
+        { c: "SCHOOL", w: [{e:"pencil", k:"llapis"}, {e:"pen", k:"bolígraf"}, {e:"rubber", k:"goma"}, {e:"ruler", k:"regle"}, {e:"book", k:"llibre"}]}
     ];
 
-    // ESTAT
-    let unlocked = JSON.parse(localStorage.getItem('eng_adv_v11')) || [];
-    let limit = parseInt(localStorage.getItem('eng_limit_v11')) || 2;
-    let currentMode, gameQueue, currentIndex, errors, isAdmin = false;
-    let sCat = null, sEng = null, mCount = 0;
+    let unlocked = JSON.parse(localStorage.getItem('eng_v12_unl')) || [];
+    let limit = parseInt(localStorage.getItem('eng_v12_lim')) || 2;
+    let queue = [], curIdx = 0, mistakes = 0, isAdmin = false, mode = 0;
+    let s1 = null, s2 = null, matches = 0;
 
-    // FUNCIONS GLOBALS (window. per assegurar visibilitat)
-    window.goToScreen = function(id) {
+    // Funciones de navegación
+    function goToScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        const target = document.getElementById(id);
-        if(target) target.classList.add('active');
-        if(id === 'config') document.getElementById('words-per-cat').value = limit;
-    };
+        document.getElementById(id).classList.add('active');
+    }
 
-    window.saveConfig = function() {
-        limit = parseInt(document.getElementById('words-per-cat').value);
-        localStorage.setItem('eng_limit_v11', limit);
-        window.goToScreen('menu');
-    };
+    function saveConfig() {
+        limit = parseInt(document.getElementById('selLimit').value);
+        localStorage.setItem('eng_v12_lim', limit);
+        goToScreen('menu');
+    }
 
-    window.startGame = function(mode) {
-        currentMode = mode; gameQueue = []; currentIndex = 0; errors = 0; mCount = 0;
-        vocabulary.forEach(v => {
-            let shuf = [...v.words].sort(() => 0.5 - Math.random());
-            let n = Math.min(limit, shuf.length);
-            gameQueue.push(...shuf.slice(0, n));
+    function startGame(m) {
+        mode = m; queue = []; curIdx = 0; mistakes = 0; matches = 0;
+        vocab.forEach(cat => {
+            let shuf = [...cat.w].sort(() => 0.5 - Math.random());
+            queue.push(...shuf.slice(0, Math.min(limit, shuf.length)));
         });
-        if (mode !== 4) gameQueue.sort(() => 0.5 - Math.random());
-        window.goToScreen('game');
-        if (mode === 4) renderMatching(); else renderQuestion();
-    };
+        if(m !== 4) queue.sort(() => 0.5 - Math.random());
+        goToScreen('game');
+        if(m === 4) drawMatch(); else drawQuest();
+    }
 
-    function renderQuestion() {
-        if (currentIndex >= gameQueue.length) return finishGame();
-        const item = gameQueue[currentIndex];
-        const cont = document.getElementById('game-content');
-        document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${gameQueue.length}`;
-        document.getElementById('lives-text').innerText = `❌: ${errors}`;
-        document.getElementById('feedback').innerHTML = "";
+    function drawQuest() {
+        if(curIdx >= queue.length) return endG();
+        const item = queue[curIdx];
+        const cont = document.getElementById('gCont');
+        document.getElementById('prog').innerText = `${curIdx+1}/${queue.length}`;
+        document.getElementById('errs').innerText = `❌: ${mistakes}`;
+        document.getElementById('fb').innerHTML = "";
         
-        let title = "";
-        if(currentMode === 1) title = "Traducció ✍️";
-        if(currentMode === 2) title = "Quiz 🤔";
-        if(currentMode === 3) title = "Escolta 🎧";
-        document.getElementById('mode-title').innerText = title;
-
-        if (currentMode === 1) {
-            cont.innerHTML = `<h3>"${item.ca}"</h3><input type="text" id="ansInp" autocomplete="off"><br><button class="primary" onclick="valAns(document.getElementById('ansInp').value)">Enviar</button>`;
-            setTimeout(() => document.getElementById('ansInp').focus(), 100);
-        } else if (currentMode === 2) {
-            let o = [item.en];
-            while(o.length < 4) {
-                let r = vocabulary[Math.floor(Math.random()*6)].words[0].en;
-                if(!o.includes(r)) o.push(r);
+        let h = `<h3>"${item.k}"</h3>`;
+        if(mode === 1) {
+            h += `<input type="text" id="ai" autocomplete="off"><br><button class="primary" onclick="check(document.getElementById('ai').value)">Enviar</button>`;
+        } else if(mode === 2) {
+            let opts = [item.e];
+            while(opts.length < 4) {
+                let r = vocab[Math.floor(Math.random()*6)].w[0].e;
+                if(!opts.includes(r)) opts.push(r);
             }
-            o.sort(() => 0.5 - Math.random());
-            cont.innerHTML = `<h3>"${item.ca}"</h3>`;
-            o.forEach(opt => {
-                let b = document.createElement('button'); b.innerText = opt;
-                b.onclick = () => valAns(opt); cont.appendChild(b);
-            });
-        } else if (currentMode === 3) {
-            cont.innerHTML = `<button onclick="playWord()" style="font-size:2rem; width:80px;">🔊</button><br><input type="text" id="ansInp" autocomplete="off"><br><button class="primary" onclick="valAns(document.getElementById('ansInp').value)">Validar</button>`;
-            playWord();
+            opts.sort(() => 0.5 - Math.random());
+            opts.forEach(o => h += `<button onclick="check('${o}')">${o}</button>`);
+        } else if(mode === 3) {
+            h = `<button style="font-size:2rem" onclick="speak('${item.e}')">🔊</button><br><input type="text" id="ai" autocomplete="off"><br><button class="primary" onclick="check(document.getElementById('ai').value)">OK</button>`;
+            speak(item.e);
+        }
+        cont.innerHTML = h;
+        if(document.getElementById('ai')) document.getElementById('ai').focus();
+    }
+
+    function check(u) {
+        const it = queue[curIdx];
+        if(u.toLowerCase().trim() === it.e.toLowerCase()) {
+            document.getElementById('fb').innerHTML = "✅ CORRECTE!";
+            setTimeout(() => { curIdx++; drawQuest(); }, 800);
+        } else {
+            mistakes++;
+            document.getElementById('fb').innerHTML = `❌ Era: ${it.e}`;
+            setTimeout(() => { curIdx++; drawQuest(); }, 1500);
         }
     }
 
-    window.valAns = function(u) {
-        const it = gameQueue[currentIndex];
-        const f = document.getElementById('feedback');
-        if (u.toLowerCase().trim() === it.en.toLowerCase().trim()) {
-            f.innerHTML = "<span style='color:green'>🌟 CORRECTE!</span>";
-            setTimeout(() => { currentIndex++; renderQuestion(); }, 800);
-        } else {
-            errors++; f.innerHTML = `<span style='color:red'>❌ Era: ${it.en}</span>`;
-            setTimeout(() => { currentIndex++; renderQuestion(); }, 1500);
-        }
-    };
+    function drawMatch() {
+        const cont = document.getElementById('gCont');
+        let ca = queue.map(i => ({t:i.k, id:i.e})).sort(() => 0.5-Math.random());
+        let en = queue.map(i => ({t:i.e, id:i.e})).sort(() => 0.5-Math.random());
+        let h = '<div class="matching-container"><div>';
+        ca.forEach(w => h += `<div class="match-card" onclick="selM(this,'${w.id}','c')">${w.t}</div>`);
+        h += '</div><div>';
+        en.forEach(w => h += `<div class="match-card" onclick="selM(this,'${w.id}','e')">${w.t}</div>`);
+        h += '</div></div>';
+        cont.innerHTML = h;
+    }
 
-    function renderMatching() {
-        document.getElementById('mode-title').innerText = "Parelles 🔗";
-        const cont = document.getElementById('game-content');
-        document.getElementById('progress-text').innerText = `0 / ${gameQueue.length}`;
-        let ca = gameQueue.map(i => ({t: i.ca, id: i.en})).sort(() => 0.5 - Math.random());
-        let en = gameQueue.map(i => ({t: i.en, id: i.en})).sort(() => 0.5 - Math.random());
-        cont.innerHTML = '<div class="matching-container"><div id="cCa"></div><div id="cEn"></div></div>';
-        ca.forEach(w => {
-            let d = document.createElement('div'); d.className = 'match-card'; d.innerText = w.t;
-            d.onclick = () => selM(d, w.id, 'ca'); document.getElementById('cCa').appendChild(d);
-        });
-        en.forEach(w => {
-            let d = document.createElement('div'); d.className = 'match-card'; d.innerText = w.t;
-            d.onclick = () => selM(d, w.id, 'en'); document.getElementById('cEn
+    function selM(el, id, ty) {
+        if(el.classList.contains('correct')) return;
+        if(ty==='c') { if(s1) s1.el.classList.remove('selected'); s1={el,id}; }
+        else { if(s2) s2.el.classList.remove('selected'); s2={el,id}; }
+        el.classList.add('selected');
+        if(s1 && s2) {
+            if(s1.id === s2.id) {
+                s1.el.classList.add('correct'); s2.el.classList.add('correct');
+                matches++; s1=null; s2=null;
+                if(matches === queue.length) setTimeout(endG, 800);
+            } else {
+                mistakes++; let a=s1.el, b=s2.el;
+                setTimeout(() => { a.classList.remove('selected'); b.classList.remove('selected'); }, 400);
+                s1=null; s2=null;
+            }
+        }
+    }
+
+    function speak(t) { 
+        const m = new SpeechSynthesisUtterance(t); 
+        m.lang = 'en-GB'; window.speechSynthesis.speak(m); 
+    }
+
+    function endG() {
+        let n = (mistakes === 0) ? 3 : (mistakes < 4 ? 1 : 0);
+        let nIds = [];
+        for(let i=0; i<n; i++) {
+            let id = Math.floor(Math.random()*151)+1;
+            if(!unlocked.includes(id)) { unlocked.push(id); nIds.push(id); }
+        }
+        localStorage.setItem('eng_v12_unl', JSON.stringify(unlocked));
+        document.getElementById('gCont').innerHTML = `<h2>Molt bé!</h2><p>+${nIds.length} cromos</p><button onclick="openAlbum()">Anar a l'Àlbum</button>`;
+    }
+
+    function openAlbum() { goToScreen('album'); drawAlb(); }
+
+    function drawAlb() {
+        const g = document.getElementById('gal'); g.innerHTML = "";
+        for(let i=1; i<=151; i++) {
+            let isU = unlocked.includes(i);
+            let d = document.createElement('div');
+            d.className = `sticker ${isU?'':'locked'}`;
+            d.onclick = () => { if(isAdmin) { if(isU) unlocked.splice(unlocked.indexOf(i),1); else unlocked.push(i); drawAlb(); } };
+            if(isU) {
+                let n = String(i).padStart(3, '0');
+                d.innerHTML = `<img src="recompenses/${n}.png" onerror="this.parentElement.innerHTML='🖼️<br>${n}'">`;
+            } else { d.innerText = i; }
+            g.appendChild(d);
+        }
+    }
+
+    function enterAdmin() {
+        if(prompt("Pass:") === "TercerDelPrat2026") {
+            isAdmin = true;
+            document.getElementById('album').classList.add('admin-editing');
+            document.getElementById('btnSaveAdmin').style.display = 'block';
+            document.getElementById('aCtrl').style.display = 'none';
+            document.getElementById('aTitle').innerText = "🔧 EDITANT";
+            drawAlb();
+        }
+    }
+
+    function exitAdmin() {
+        isAdmin = false;
+        localStorage.setItem('eng_v12_unl', JSON.stringify(unlocked));
+        document.getElementById('album').classList.remove('admin-editing');
+        document.getElementById('btnSaveAdmin').style.display = 'none';
+        document.getElementById('aCtrl').style.display = 'block';
+        document.getElementById('aTitle').innerText = "El meu Àlbum 🏆";
+        drawAlb();
+    }
+</script>
+</body>
+</html>
