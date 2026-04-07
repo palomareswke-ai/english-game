@@ -14,7 +14,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -27,10 +27,10 @@
 
         #app { width: 100%; max-width: 600px; padding: 20px; box-sizing: border-box; text-align: center; }
         .screen { display: none; }
-        .active { display: block; animation: fadeIn 0.3s ease-in; }
+        .screen.active { display: block; animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .uk-flag { width: 35px; vertical-align: middle; margin: 0 8px; border-radius: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .uk-flag { width: 35px; vertical-align: middle; margin: 0 8px; border-radius: 3px; }
 
         button {
             background-color: var(--secondary-color);
@@ -51,33 +51,22 @@
         button.primary { background-color: var(--primary-color); box-shadow: 0 4px #e06d8a; }
         button.save { background-color: #27ae60; box-shadow: 0 4px #1e8449; }
 
-        select {
-            padding: 12px;
-            border-radius: 10px;
-            border: 2px solid var(--secondary-color);
-            font-size: 1.1rem;
-            width: 80%;
-            margin: 20px 0;
-        }
+        select { padding: 12px; border-radius: 10px; border: 2px solid var(--secondary-color); font-size: 1.1rem; width: 80%; margin: 20px 0; }
 
-        /* Àlbum */
         .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; margin-top: 20px; }
-        .sticker { aspect-ratio: 1/1; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px solid #ddd; overflow: hidden; font-size: 0.8rem; position: relative; }
+        .sticker { aspect-ratio: 1/1; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px solid #ddd; overflow: hidden; font-size: 0.8rem; }
         .sticker img { width: 100%; height: 100%; object-fit: cover; }
         .sticker.locked { background: #eee; color: #bbb; }
-        
         .admin-editing .sticker { cursor: pointer; border: 2px dashed var(--primary-color) !important; }
-        
-        /* Matching */
+
         .matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
         .match-card { background: white; padding: 15px 10px; border-radius: 12px; border: 3px solid #ddd; cursor: pointer; font-weight: bold; min-height: 55px; display: flex; align-items: center; justify-content: center; }
         .match-card.selected { border-color: var(--primary-color); background-color: #fff0f3; }
-        .match-card.correct { border-color: var(--secondary-color); background-color: #e8faf8; color: #aaa; }
+        .match-card.correct { border-color: var(--secondary-color); background-color: #e8faf8; color: #aaa; cursor: default; }
         .match-card.wrong { border-color: #ff6b6b; animation: shake 0.3s; }
-        
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
-        .feedback-msg { font-size: 1.3rem; font-weight: bold; margin: 15px 0; height: 30px; }
+        .feedback-msg { font-size: 1.3rem; font-weight: bold; margin: 15px 0; min-height: 30px; }
         input[type="text"] { padding: 15px; border-radius: 15px; border: 3px solid var(--secondary-color); font-size: 1.2rem; width: 80%; text-align: center; outline: none; margin-bottom: 10px; }
     </style>
 </head>
@@ -91,8 +80,8 @@
         <button class="primary" onclick="startGame(3)">3. Escolta 🎧</button>
         <button class="primary" onclick="startGame(4)">4. Parelles 🔗</button>
         <hr style="margin: 20px; border: 0; border-top: 2px dashed #ccc;">
-        <button onclick="showConfig()">Configuració ⚙️</button>
-        <button onclick="showAlbum()">El meu Àlbum 📸</button>
+        <button onclick="goToScreen('config')">Configuració ⚙️</button>
+        <button onclick="openAlbum()">El meu Àlbum 📸</button>
     </div>
 
     <div id="config" class="screen">
@@ -107,12 +96,12 @@
             <option value="12">12 paraules</option>
         </select>
         <button class="save" onclick="saveConfig()">Guardar Canvis</button>
-        <button onclick="showMenu()">Cancel·lar</button>
+        <button onclick="goToScreen('menu')">Tornar</button>
     </div>
 
     <div id="game" class="screen">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <button style="width:50px; padding:5px; margin:0;" onclick="showMenu()">🏠</button>
+            <button style="width:50px; padding:5px; margin:0;" onclick="goToScreen('menu')">🏠</button>
             <div id="progress-text">0 / 0</div>
             <div id="lives-text">❌: 0</div>
         </div>
@@ -124,12 +113,12 @@
     <div id="album" class="screen">
         <h2 id="album-title">Àlbum de Cromos 🏆</h2>
         <p id="stats-text"></p>
-        <button id="save-admin-btn" style="display:none;" class="save" onclick="exitAdminMode()">💾 Guardar Canvis</button>
+        <button id="save-admin-btn" style="display:none;" class="save" onclick="exitAdmin()">💾 Guardar Canvis</button>
         <div class="gallery" id="sticker-gallery"></div>
         <div id="album-controls" style="margin-top:20px;">
-            <button class="primary" onclick="showMenu()">Tornar al Inici 🏠</button>
+            <button class="primary" onclick="goToScreen('menu')">Inici 🏠</button>
             <br><br>
-            <small style="color:#ccc; cursor:pointer" onclick="adminMode()">🔒 Admin</small>
+            <small style="color:#ccc; cursor:pointer" onclick="enterAdmin()">🔒 Admin</small>
         </div>
     </div>
 </div>
@@ -139,27 +128,172 @@
         { cat: "COLORS", words: [{en:"red", ca:"vermell"}, {en:"orange", ca:"taronja"}, {en:"yellow", ca:"groc"}, {en:"green", ca:"verd"}, {en:"blue", ca:"blau"}, {en:"purple", ca:"lila"}, {en:"pink", ca:"rosa"}, {en:"brown", ca:"marró"}, {en:"white", ca:"blanc"}, {en:"black", ca:"negre"}]},
         { cat: "NUMBERS", words: [{en:"one", ca:"u"}, {en:"two", ca:"dos"}, {en:"three", ca:"tres"}, {en:"four", ca:"quatre"}, {en:"five", ca:"cinc"}, {en:"six", ca:"sis"}, {en:"seven", ca:"set"}, {en:"eight", ca:"vuit"}, {en:"nine", ca:"nou"}, {en:"ten", ca:"deu"}, {en:"eleven", ca:"onze"}, {en:"twelve", ca:"dotze"}, {en:"thirteen", ca:"tretze"}, {en:"fourteen", ca:"catorze"}, {en:"fifteen", ca:"quinze"}, {en:"sixteen", ca:"setze"}, {en:"seventeen", ca:"disset"}, {en:"eighteen", ca:"divuit"}, {en:"nineteen", ca:"dinou"}, {en:"twenty", ca:"vint"}]},
         { cat: "DAYS", words: [{en:"monday", ca:"dilluns"}, {en:"tuesday", ca:"dimarts"}, {en:"wednesday", ca:"dimecres"}, {en:"thursday", ca:"dijous"}, {en:"friday", ca:"divendres"}, {en:"saturday", ca:"dissabte"}, {en:"sunday", ca:"diumenge"}, {en:"weekend", ca:"cap de setmana"}]},
-        { cat: "MONTHS", words: [{en:"january", ca:"gener"}, {en:"february", ca:"febrer"}, {en:"march", ca:"març"}, {en:"april", ca:"abril"}, {en:"may", ca:"maig"}, {en:"june", ca:"juny"}, {en:"july", ca:"juliol"}, {en:"august", ca:"agost"}, {en:"september", ca:"septembre"}, {en:"october", ca:"octubre"}, {en:"november", ca:"novembre"}, {en:"december", ca:"desembre"}]},
+        { cat: "MONTHS", words: [{en:"january", ca:"gener"}, {en:"february", ca:"febrer"}, {en:"march", ca:"març"}, {en:"april", ca:"abril"}, {en:"may", ca:"maig"}, {en:"june", ca:"juny"}, {en:"july", ca:"juliol"}, {en:"august", ca:"agost"}, {en:"september", ca:"septembre"}, {en:"october", ca:"octubre"}, {en:"november", ca:"nobre"}, {en:"december", ca:"desembre"}]},
         { cat: "WEATHER", words: [{en:"sunny", ca:"assolellat"}, {en:"cloudy", ca:"nuvolat"}, {en:"windy", ca:"ventós"}, {en:"stormy", ca:"tempesta"}, {en:"rainy", ca:"plujós"}, {en:"snowy", ca:"neu"}, {en:"hot", ca:"calor"}, {en:"cold", ca:"fred"}]},
         { cat: "CLASSROOM", words: [{en:"pencil", ca:"llapis"}, {en:"pen", ca:"bolígraf"}, {en:"rubber", ca:"goma d'esborrar"}, {en:"pencil sharpener", ca:"maquineta"}, {en:"glue", ca:"barra d'enganxar"}, {en:"scissors", ca:"tisores"}, {en:"ruler", ca:"regle"}, {en:"coloured pencil", ca:"llapis de colors"}, {en:"markers", ca:"retoladors"}]}
     ];
 
-    let unlocked = JSON.parse(localStorage.getItem('eng_adv_v9')) || [];
-    let wordsPerCat = parseInt(localStorage.getItem('eng_config_limit')) || 2;
+    let unlocked = JSON.parse(localStorage.getItem('eng_adv_v10')) || [];
+    let limit = parseInt(localStorage.getItem('eng_limit_v10')) || 2;
     let currentMode, gameQueue, currentIndex, errors, isAdmin = false;
-    let selectedCat = null, selectedEng = null, matchedCount = 0;
+    let sCat = null, sEng = null, mCount = 0;
 
-    function showScreen(id) {
+    function goToScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        const target = document.getElementById(id);
-        if(target) target.classList.add('active');
+        document.getElementById(id).classList.add('active');
+        if(id === 'config') document.getElementById('words-per-cat').value = limit;
     }
 
-    function showMenu() { showScreen('menu'); }
-    function showConfig() { 
-        document.getElementById('words-per-cat').value = wordsPerCat;
-        showScreen('config'); 
-    }
     function saveConfig() {
-        wordsPerCat = parseInt(document.getElementById('words-per-cat').value);
-        localStorage.setItem('eng_
+        limit = parseInt(document.getElementById('words-per-cat').value);
+        localStorage.setItem('eng_limit_v10', limit);
+        goToScreen('menu');
+    }
+
+    function startGame(mode) {
+        currentMode = mode; gameQueue = []; currentIndex = 0; errors = 0; mCount = 0;
+        vocabulary.forEach(v => {
+            let shuf = [...v.words].sort(() => 0.5 - Math.random());
+            let n = Math.min(limit, shuf.length);
+            gameQueue.push(...shuf.slice(0, n));
+        });
+        if (mode !== 4) gameQueue.sort(() => 0.5 - Math.random());
+        goToScreen('game');
+        if (mode === 4) renderMatching(); else renderQuestion();
+    }
+
+    function renderQuestion() {
+        if (currentIndex >= gameQueue.length) return finishGame();
+        const item = gameQueue[currentIndex];
+        const cont = document.getElementById('game-content');
+        document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${gameQueue.length}`;
+        document.getElementById('lives-text').innerText = `❌: ${errors}`;
+        document.getElementById('feedback').innerHTML = "";
+        
+        if (currentMode === 1) {
+            document.getElementById('mode-title').innerText = "Traducció ✍️";
+            cont.innerHTML = `<h3>"${item.ca}"</h3><input type="text" id="ansInp" autocomplete="off"><br><button class="primary" onclick="valAns(document.getElementById('ansInp').value)">Enviar</button>`;
+            document.getElementById('ansInp').focus();
+        } else if (currentMode === 2) {
+            document.getElementById('mode-title').innerText = "Quiz 🤔";
+            let o = [item.en];
+            while(o.length < 4) {
+                let r = vocabulary[Math.floor(Math.random()*6)].words[0].en;
+                if(!o.includes(r)) o.push(r);
+            }
+            o.sort(() => 0.5 - Math.random());
+            cont.innerHTML = `<h3>"${item.ca}"</h3>`;
+            o.forEach(opt => {
+                let b = document.createElement('button'); b.innerText = opt;
+                b.onclick = () => valAns(opt); cont.appendChild(b);
+            });
+        } else if (currentMode === 3) {
+            document.getElementById('mode-title').innerText = "Escolta 🎧";
+            cont.innerHTML = `<button onclick="play(gameQueue[currentIndex].en)" style="font-size:2rem; width:80px;">🔊</button><br><input type="text" id="ansInp" autocomplete="off"><br><button class="primary" onclick="valAns(document.getElementById('ansInp').value)">Validar</button>`;
+            play(item.en);
+        }
+    }
+
+    function valAns(u) {
+        const it = gameQueue[currentIndex];
+        const f = document.getElementById('feedback');
+        if (u.toLowerCase().trim() === it.en.toLowerCase().trim()) {
+            f.innerHTML = "<span style='color:green'>🌟 CORRECTE!</span>";
+            setTimeout(() => { currentIndex++; renderQuestion(); }, 800);
+        } else {
+            errors++; f.innerHTML = `<span style='color:red'>❌ Era: ${it.en}</span>`;
+            setTimeout(() => { currentIndex++; renderQuestion(); }, 1500);
+        }
+    }
+
+    function renderMatching() {
+        document.getElementById('mode-title').innerText = "Parelles 🔗";
+        const cont = document.getElementById('game-content');
+        document.getElementById('progress-text').innerText = `0 / ${gameQueue.length}`;
+        let ca = gameQueue.map(i => ({t: i.ca, id: i.en})).sort(() => 0.5 - Math.random());
+        let en = gameQueue.map(i => ({t: i.en, id: i.en})).sort(() => 0.5 - Math.random());
+        cont.innerHTML = '<div class="matching-container"><div id="cCa"></div><div id="cEn"></div></div>';
+        ca.forEach(w => {
+            let d = document.createElement('div'); d.className = 'match-card'; d.innerText = w.t;
+            d.onclick = () => selM(d, w.id, 'ca'); document.getElementById('cCa').appendChild(d);
+        });
+        en.forEach(w => {
+            let d = document.createElement('div'); d.className = 'match-card'; d.innerText = w.t;
+            d.onclick = () => selM(d, w.id, 'en'); document.getElementById('cEn').appendChild(d);
+        });
+    }
+
+    function selM(el, id, ty) {
+        if (el.classList.contains('correct')) return;
+        if (ty === 'ca') { if(sCat) sCat.el.classList.remove('selected'); sCat = {el: el, id: id}; }
+        else { if(sEng) sEng.el.classList.remove('selected'); sEng = {el: el, id: id}; }
+        el.classList.add('selected');
+        if (sCat && sEng) {
+            if (sCat.id === sEng.id) {
+                sCat.el.classList.add('correct'); sEng.el.classList.add('correct');
+                mCount++; document.getElementById('progress-text').innerText = `${mCount} / ${gameQueue.length}`;
+                sCat = null; sEng = null; if (mCount === gameQueue.length) setTimeout(finishGame, 800);
+            } else {
+                errors++; document.getElementById('lives-text').innerText = `❌: ${errors}`;
+                let c = sCat.el, e = sEng.el; c.classList.add('wrong'); e.classList.add('wrong');
+                setTimeout(() => { c.classList.remove('wrong', 'selected'); e.classList.remove('wrong', 'selected'); }, 400);
+                sCat = null; sEng = null;
+            }
+        }
+    }
+
+    function play(t) { const m = new SpeechSynthesisUtterance(t); m.lang = 'en-GB'; window.speechSynthesis.speak(m); }
+
+    function finishGame() {
+        let n = (errors === 0) ? 3 : (errors < 4 ? 1 : 0);
+        let nIds = [];
+        for(let i=0; i<n; i++) {
+            let id = Math.floor(Math.random() * 151) + 1;
+            if(!unlocked.includes(id)) { unlocked.push(id); nIds.push(id); }
+        }
+        localStorage.setItem('eng_adv_v10', JSON.stringify(unlocked));
+        document.getElementById('game-content').innerHTML = `<h2>🏁 Acabat!</h2><p>Has guanyat ${nIds.length} cromos.</p><button class="primary" onclick="openAlbum()">Anar a l'Àlbum</button>`;
+    }
+
+    function openAlbum() { goToScreen('album'); drawAlbum(); }
+
+    function drawAlbum() {
+        const gal = document.getElementById('sticker-gallery');
+        gal.innerHTML = "";
+        document.getElementById('stats-text').innerText = `Tens ${unlocked.length} de 151 cromos`;
+        for(let i=1; i<=151; i++) {
+            let isU = unlocked.includes(i);
+            let d = document.createElement('div');
+            d.className = `sticker ${isU ? '' : 'locked'}`;
+            d.onclick = () => { if(isAdmin) { if(isU) unlocked.splice(unlocked.indexOf(i),1); else unlocked.push(i); drawAlbum(); } };
+            if(isU) {
+                let n = String(i).padStart(3, '0');
+                d.innerHTML = `<img src="recompenses/${n}.png" onerror="this.parentElement.innerHTML='🖼️<br>${n}'">`;
+            } else { d.innerText = i; }
+            gal.appendChild(d);
+        }
+    }
+
+    function enterAdmin() {
+        if(prompt("Pass:") === "TercerDelPrat2026") {
+            isAdmin = true;
+            document.getElementById('album').classList.add('admin-editing');
+            document.getElementById('save-admin-btn').style.display = 'block';
+            document.getElementById('album-controls').style.display = 'none';
+            document.getElementById('album-title').innerText = "🔧 EDITANT";
+            drawAlbum();
+        }
+    }
+
+    function exitAdmin() {
+        isAdmin = false;
+        localStorage.setItem('eng_adv_v10', JSON.stringify(unlocked));
+        document.getElementById('album').classList.remove('admin-editing');
+        document.getElementById('save-admin-btn').style.display = 'none';
+        document.getElementById('album-controls').style.display = 'block';
+        document.getElementById('album-title').innerText = "Àlbum de Cromos 🏆";
+        drawAlbum();
+    }
+</script>
+</body>
+</html>
