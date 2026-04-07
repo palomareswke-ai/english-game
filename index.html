@@ -18,7 +18,14 @@
         .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; margin-top: 20px; }
         .sticker { aspect-ratio: 1/1; background: white; border: 1px solid #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 0.7rem; }
         .sticker img { width: 100%; height: 100%; object-fit: cover; }
-        .sticker.locked { background: #eee; color: #999; }
+        .sticker.locked { background-color: #eee; 
+            color: #333; /* Color del número para que resalte */
+            font-weight: bold;
+            background-image: url('pokeball.png'); /* Tu imagen de fondo */
+            background-size: cover;
+            background-position: center;
+            text-shadow: 1px 1px 2px white; /* Sombra blanca al número para que siempre sea legible */
+        }
         .admin-editing .sticker { cursor: pointer; border: 2px dashed var(--p); }
         .matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .match-card { background: white; padding: 15px 5px; border: 2px solid #ddd; border-radius: 10px; cursor: pointer; min-height: 50px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
