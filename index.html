@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Adventure 🌟</title>
+    <title> English Adventure </title>
     <style>
         :root {
             --bg-color: #fdf6e3;
@@ -11,7 +11,6 @@
             --secondary-color: #4ecdc4;
             --accent-color: #ffe66d;
             --text-color: #2d3436;
-            --card-shadow: 0 8px 16px rgba(0,0,0,0.1);
         }
 
         body {
@@ -23,308 +22,74 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            user-select: none;
         }
 
-        #app {
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-
+        #app { width: 100%; max-width: 600px; padding: 20px; box-sizing: border-box; text-align: center; }
         .screen { display: none; }
         .active { display: block; animation: fadeIn 0.4s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
 
-        /* Botones Divertidos */
+        .uk-flag { width: 35px; vertical-align: middle; margin: 0 8px; border-radius: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
         button {
             background-color: var(--secondary-color);
             border: none;
             border-radius: 20px;
-            padding: 15px 25px;
+            padding: 15px;
             font-size: 1.1rem;
             color: white;
             font-weight: bold;
             cursor: pointer;
             margin: 8px;
             box-shadow: 0 4px #3baea5;
+            width: 85%;
             transition: all 0.1s;
-            width: 80%;
         }
 
-        button:active { transform: translateY(4px); box-shadow: 0 0px #3baea5; }
+        button:active { transform: translateY(3px); box-shadow: 0 1px #3baea5; }
         button.primary { background-color: var(--primary-color); box-shadow: 0 4px #e06d8a; }
-        button.small { width: auto; font-size: 0.9rem; padding: 10px 15px; }
+        button.save { background-color: #27ae60; box-shadow: 0 4px #1e8449; }
 
-        input[type="text"] {
-            padding: 15px;
-            border-radius: 15px;
-            border: 3px solid var(--secondary-color);
-            font-size: 1.2rem;
-            width: 80%;
-            text-align: center;
-            margin-bottom: 15px;
-            outline: none;
+        select {
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid var(--secondary-color);
+            font-size: 1.1rem;
+            width: 60%;
+            margin: 20px 0;
         }
 
-        /* Álbum de Cromos */
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            gap: 12px;
-            margin-top: 20px;
-            padding: 10px;
-        }
-
-        .sticker {
-            aspect-ratio: 1/1;
-            background: #fff;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            border: 2px solid #ddd;
-            overflow: hidden;
-            position: relative;
-            box-shadow: var(--card-shadow);
-        }
-
+        /* Àlbum y Admin */
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; margin-top: 20px; }
+        .sticker { aspect-ratio: 1/1; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px solid #ddd; overflow: hidden; font-size: 0.8rem; }
         .sticker img { width: 100%; height: 100%; object-fit: cover; }
-        .sticker.locked { background: #e0e0e0; filter: grayscale(1); opacity: 0.6; }
-        .sticker-num { font-size: 0.6rem; color: #999; margin-top: 2px; }
-
-        /* Feedback visual */
+        .sticker.locked { background: #eee; color: #bbb; }
+        .admin-editing .sticker { cursor: pointer; border: 2px dashed var(--primary-color) !important; }
+        
+        /* Matching Mode */
+        .matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .match-card { background: white; padding: 15px 10px; border-radius: 12px; border: 3px solid #ddd; cursor: pointer; font-weight: bold; min-height: 50px; display: flex; align-items: center; justify-content: center; }
+        .match-card.selected { border-color: var(--primary-color); background-color: #fff0f3; }
+        .match-card.correct { border-color: var(--secondary-color); background-color: #e8faf8; color: #aaa; }
+        
         .feedback-msg { font-size: 1.3rem; font-weight: bold; margin: 15px 0; height: 30px; }
-        .correct { color: #27ae60; }
-        .wrong { color: #e74c3c; }
-
-        /* Modo Matching */
-        .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .match-btn { width: 100%; padding: 10px; font-size: 0.9rem; background: white; color: var(--text-color); border: 2px solid var(--secondary-color); box-shadow: 0 3px #ddd; }
-        .match-btn.selected { background: var(--accent-color); border-color: orange; }
-        .match-btn.done { visibility: hidden; }
-
+        input[type="text"] { padding: 15px; border-radius: 15px; border: 3px solid var(--secondary-color); font-size: 1.2rem; width: 80%; text-align: center; outline: none; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div id="app">
     <div id="menu" class="screen active">
-        <h1 style="font-size: 2.5rem;">English Adventure 🦄</h1>
-        <p>Tria un joc per guanyar cromos!</p>
+        <h1 style="font-size: 1.8rem;">
+            🎁 English Adventure 
+            <img class="uk-flag" src="https://upload.wikimedia.org/wikipedia/commons/8/83/Flag_of_the_United_Kingdom_%283-5%29.svg" alt="UK Flag">
+            🦄
+        </h1>
         <button class="primary" onclick="startGame(1)">1. Traducció ✍️</button>
         <button class="primary" onclick="startGame(2)">2. Quiz 🤔</button>
         <button class="primary" onclick="startGame(3)">3. Escolta 🎧</button>
         <button class="primary" onclick="startGame(4)">4. Parelles 🔗</button>
-        <hr style="margin: 20px; border: 0; border-top: 2px dashed #ccc;">
+        <hr style="margin: 15px; border: 0; border-top: 2px dashed #ccc;">
+        <button onclick="showScreen('config')">Configuració ⚙️</button>
         <button onclick="showAlbum()">El meu Àlbum 📸</button>
-    </div>
-
-    <div id="game" class="screen">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <button class="small" onclick="showMenu()">🏠</button>
-            <div id="progress-text">1 / 12</div>
-            <div id="lives-text">❤️ Error: 0</div>
-        </div>
-        <h2 id="mode-title">...</h2>
-        <div id="game-content"></div>
-        <div id="feedback" class="feedback-msg"></div>
-    </div>
-
-    <div id="album" class="screen">
-        <h2>Àlbum de Recompenses 🏆</h2>
-        <p id="stats-text">Tens 0 de 151 cromos</p>
-        <div class="gallery" id="sticker-gallery"></div>
-        <button class="primary" onclick="showMenu()">Tornar a jugar 🏠</button>
-        <br><br>
-        <small style="color: #ccc; cursor: pointer;" onclick="adminMode()">🔒 Admin</small>
-    </div>
-</div>
-
-<script>
-    // --- BASE DE DATOS ---
-    const vocabulary = [
-        { cat: "COLORS", words: [{en:"red", ca:"vermell"}, {en:"orange", ca:"taronja"}, {en:"yellow", ca:"groc"}, {en:"green", ca:"verd"}, {en:"blue", ca:"blau"}, {en:"purple", ca:"lila"}, {en:"pink", ca:"rosa"}, {en:"brown", ca:"marró"}, {en:"white", ca:"blanc"}, {en:"black", ca:"negre"}]},
-        { cat: "NUMBERS", words: [{en:"one", ca:"u"}, {en:"two", ca:"dos"}, {en:"three", ca:"tres"}, {en:"four", ca:"quatre"}, {en:"five", ca:"cinc"}, {en:"six", ca:"sis"}, {en:"seven", ca:"set"}, {en:"eight", ca:"vuit"}, {en:"nine", ca:"nou"}, {en:"ten", ca:"deu"}, {en:"eleven", ca:"onze"}, {en:"twelve", ca:"dotze"}, {en:"thirteen", ca:"tretze"}, {en:"fourteen", ca:"catorze"}, {en:"fifteen", ca:"quinze"}, {en:"sixteen", ca:"setze"}, {en:"seventeen", ca:"disset"}, {en:"eighteen", ca:"divuit"}, {en:"nineteen", ca:"dinou"}, {en:"twenty", ca:"vint"}]},
-        { cat: "DAYS", words: [{en:"monday", ca:"dilluns"}, {en:"tuesday", ca:"dimarts"}, {en:"wednesday", ca:"dimecres"}, {en:"thursday", ca:"dijous"}, {en:"friday", ca:"divendres"}, {en:"saturday", ca:"dissabte"}, {en:"sunday", ca:"diumenge"}, {en:"weekend", ca:"cap de setmana"}]},
-        { cat: "MONTHS", words: [{en:"january", ca:"gener"}, {en:"february", ca:"febrer"}, {en:"march", ca:"març"}, {en:"april", ca:"abril"}, {en:"may", ca:"maig"}, {en:"june", ca:"juny"}, {en:"july", ca:"juliol"}, {en:"august", ca:"agost"}, {en:"september", ca:"septembre"}, {en:"october", ca:"octubre"}, {en:"november", ca:"novembre"}, {en:"december", ca:"desembre"}]},
-        { cat: "WEATHER", words: [{en:"sunny", ca:"assolellat"}, {en:"cloudy", ca:"nuvolat"}, {en:"windy", ca:"ventós"}, {en:"stormy", ca:"tempesta"}, {en:"rainy", ca:"plujós"}, {en:"snowy", ca:"neu"}, {en:"hot", ca:"calor"}, {en:"cold", ca:"fred"}]},
-        { cat: "CLASSROOM", words: [{en:"pencil", ca:"llapis"}, {en:"pen", ca:"bolígraf"}, {en:"rubber", ca:"goma d'esborrar"}, {en:"pencil sharpener", ca:"maquineta"}, {en:"glue", ca:"barra d'enganxar"}, {en:"scissors", ca:"tisores"}, {en:"ruler", ca:"regle"}, {en:"coloured pencil", ca:"llapis de colors"}, {en:"markers", ca:"retoladors"}]}
-    ];
-
-    let currentMode = 1;
-    let gameQueue = [];
-    let currentIndex = 0;
-    let errors = 0;
-    let unlocked = JSON.parse(localStorage.getItem('eng_rewards_v2')) || [];
-
-    // --- MOTOR DEL JUEGO ---
-    function showScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-
-    function showMenu() { showScreen('menu'); }
-
-    function startGame(mode) {
-        currentMode = mode;
-        gameQueue = [];
-        currentIndex = 0;
-        errors = 0;
-
-        // Selección aleatoria según reglas
-        const countPerCat = (mode === 4) ? 3 : 2;
-        vocabulary.forEach(v => {
-            let shuffled = [...v.words].sort(() => 0.5 - Math.random());
-            gameQueue.push(...shuffled.slice(0, countPerCat));
-        });
-        
-        if (mode !== 4) gameQueue.sort(() => 0.5 - Math.random());
-        
-        showScreen('game');
-        nextQuestion();
-    }
-
-    function nextQuestion() {
-        if (currentIndex >= gameQueue.length) {
-            endGame();
-            return;
-        }
-
-        const item = gameQueue[currentIndex];
-        const container = document.getElementById('game-content');
-        const feedback = document.getElementById('feedback');
-        document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${gameQueue.length}`;
-        document.getElementById('lives-text').innerText = `❌ Errors: ${errors}`;
-        feedback.innerHTML = "";
-        container.innerHTML = "";
-
-        // NORMALIZACIÓN: Se usa .toLowerCase().trim() en las comparaciones
-        
-        if (currentMode === 1) { // Escritura
-            document.getElementById('mode-title').innerText = "Escriu en Anglès ✍️";
-            container.innerHTML = `<h3>Com es diu "${item.ca.toUpperCase()}"?</h3>
-                <input type="text" id="ans" placeholder="..." autocomplete="off">
-                <button class="primary" onclick="checkAnswer(document.getElementById('ans').value)">Comprovar ✅</button>`;
-            document.getElementById('ans').focus();
-        } 
-        else if (currentMode === 2 || currentMode === 4) { // Quiz o Parelles (Quiz simplificado)
-            document.getElementById('mode-title').innerText = currentMode === 2 ? "Tria l'opció correcta 🤔" : "Relaciona les paraules 🔗";
-            let options = [item.en];
-            while(options.length < 4) {
-                let r = vocabulary[Math.floor(Math.random()*6)].words[0].en;
-                if(!options.includes(r)) options.push(r);
-            }
-            options.sort(() => 0.5 - Math.random());
-            container.innerHTML = `<h3>"${item.ca.toUpperCase()}" és...</h3>`;
-            options.forEach(opt => {
-                let b = document.createElement('button');
-                b.innerText = opt;
-                b.onclick = () => checkAnswer(opt);
-                container.appendChild(b);
-            });
-        }
-        else if (currentMode === 3) { // Audio
-            document.getElementById('mode-title').innerText = "Escolta i escriu 🎧";
-            container.innerHTML = `<button onclick="playAudio('${item.en}')" style="width:100px; height:100px; font-size:2rem;">🔊</button>
-                <br><input type="text" id="ans" placeholder="..." autocomplete="off">
-                <button class="primary" onclick="checkAnswer(document.getElementById('ans').value)">OK</button>`;
-            playAudio(item.en);
-        }
-    }
-
-    function checkAnswer(userInp) {
-        const item = gameQueue[currentIndex];
-        // MEJORA: NORMALIZACIÓN TOTAL
-        const cleanInput = userInp.toLowerCase().trim();
-        const cleanCorrect = item.en.toLowerCase().trim();
-
-        const feedback = document.getElementById('feedback');
-        
-        if (cleanInput === cleanCorrect) {
-            feedback.innerHTML = "<span class='correct'>🌟 MOLT BÉ! 🌟</span>";
-            setTimeout(() => { currentIndex++; nextQuestion(); }, 1200);
-        } else {
-            errors++;
-            feedback.innerHTML = `<span class='wrong'>❌ Era: ${item.en.toUpperCase()}</span>`;
-            setTimeout(() => { currentIndex++; nextQuestion(); }, 2000);
-        }
-    }
-
-    function playAudio(text) {
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'en-GB';
-        window.speechSynthesis.speak(msg);
-    }
-
-    // --- RECOMPENSAS Y ÁLBUM ---
-    function endGame() {
-        let won = 0;
-        if (errors === 0) won = 3;
-        else if (errors < 4) won = 1;
-
-        let newStickers = [];
-        for(let i=0; i<won; i++) {
-            let id = Math.floor(Math.random() * 151) + 1;
-            if(!unlocked.includes(id)) {
-                unlocked.push(id);
-                newStickers.push(id);
-            }
-        }
-        localStorage.setItem('eng_rewards_v2', JSON.stringify(unlocked));
-
-        document.getElementById('game-content').innerHTML = `
-            <h2>Joc Finalitzat! 🏁</h2>
-            <p style="font-size:1.5rem">Has guanyat <b>${newStickers.length}</b> cromos nous!</p>
-            <div style="font-size:3rem">${'🎁'.repeat(newStickers.length)}</div>
-            <button class="primary" onclick="showAlbum()">Veure el meu Àlbum</button>
-        `;
-    }
-
-    function showAlbum() {
-        showScreen('album');
-        const gal = document.getElementById('sticker-gallery');
-        gal.innerHTML = "";
-        document.getElementById('stats-text').innerText = `Tens ${unlocked.length} de 151 cromos`;
-
-        for(let i=1; i<=151; i++) {
-            const isUnlocked = unlocked.includes(i);
-            const numStr = String(i).padStart(3, '0');
-            
-            let div = document.createElement('div');
-            div.className = `sticker ${isUnlocked ? '' : 'locked'}`;
-            
-            if(isUnlocked) {
-                // MEJORA: GESTIÓN DE ERRORES DE IMAGEN
-                div.innerHTML = `
-                    <img src="recompenses/${numStr}.png" 
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
-                         alt="Cromo ${i}">
-                    <div style="display:none; flex-direction:column; align-items:center;">
-                        <span style="font-size:1.5rem;">🖼️</span>
-                        <span class="sticker-num">${numStr}</span>
-                    </div>
-                `;
-            } else {
-                div.innerHTML = `<span style="color:#aaa">${i}</span>`;
-            }
-            gal.appendChild(div);
-        }
-    }
-
-    function adminMode() {
-        const p = prompt("Contrasenya:");
-        if(p === "TercerDelPrat2026") {
-            const a = prompt("Vols 'tots' els cromos o un 'numero'?");
-            if(a === "tots") unlocked = Array.from({length: 151}, (_, i) => i + 1);
-            else unlocked.push(parseInt(a));
-            localStorage.setItem('eng_rewards_v2', JSON.stringify(unlocked));
-            showAlbum();
-        }
-    }
-</script>
-</body>
-</html>
