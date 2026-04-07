@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> English Adventure </title>
+    <title>🎁 English Adventure 🇬🇧 🦄</title>
     <style>
         :root {
             --bg-color: #fdf6e3;
@@ -27,8 +27,8 @@
 
         #app { width: 100%; max-width: 600px; padding: 20px; box-sizing: border-box; text-align: center; }
         .screen { display: none; }
-        .active { display: block; animation: fadeIn 0.4s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+        .active { display: block; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .uk-flag { width: 35px; vertical-align: middle; margin: 0 8px; border-radius: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
@@ -56,23 +56,27 @@
             border-radius: 10px;
             border: 2px solid var(--secondary-color);
             font-size: 1.1rem;
-            width: 60%;
+            width: 80%;
             margin: 20px 0;
         }
 
-        /* Àlbum y Admin */
+        /* Àlbum */
         .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; margin-top: 20px; }
-        .sticker { aspect-ratio: 1/1; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px solid #ddd; overflow: hidden; font-size: 0.8rem; }
+        .sticker { aspect-ratio: 1/1; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px solid #ddd; overflow: hidden; font-size: 0.8rem; position: relative; }
         .sticker img { width: 100%; height: 100%; object-fit: cover; }
         .sticker.locked { background: #eee; color: #bbb; }
+        
         .admin-editing .sticker { cursor: pointer; border: 2px dashed var(--primary-color) !important; }
         
-        /* Matching Mode */
+        /* Matching */
         .matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .match-card { background: white; padding: 15px 10px; border-radius: 12px; border: 3px solid #ddd; cursor: pointer; font-weight: bold; min-height: 50px; display: flex; align-items: center; justify-content: center; }
+        .match-card { background: white; padding: 15px 10px; border-radius: 12px; border: 3px solid #ddd; cursor: pointer; font-weight: bold; min-height: 55px; display: flex; align-items: center; justify-content: center; }
         .match-card.selected { border-color: var(--primary-color); background-color: #fff0f3; }
         .match-card.correct { border-color: var(--secondary-color); background-color: #e8faf8; color: #aaa; }
+        .match-card.wrong { border-color: #ff6b6b; animation: shake 0.3s; }
         
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
         .feedback-msg { font-size: 1.3rem; font-weight: bold; margin: 15px 0; height: 30px; }
         input[type="text"] { padding: 15px; border-radius: 15px; border: 3px solid var(--secondary-color); font-size: 1.2rem; width: 80%; text-align: center; outline: none; margin-bottom: 10px; }
     </style>
@@ -81,15 +85,81 @@
 
 <div id="app">
     <div id="menu" class="screen active">
-        <h1 style="font-size: 1.8rem;">
-            🎁 English Adventure 
-            <img class="uk-flag" src="https://upload.wikimedia.org/wikipedia/commons/8/83/Flag_of_the_United_Kingdom_%283-5%29.svg" alt="UK Flag">
-            🦄
-        </h1>
+        <h1>🎁 English Adventure <img class="uk-flag" src="https://upload.wikimedia.org/wikipedia/commons/8/83/Flag_of_the_United_Kingdom_%283-5%29.svg" alt="UK"> 🦄</h1>
         <button class="primary" onclick="startGame(1)">1. Traducció ✍️</button>
         <button class="primary" onclick="startGame(2)">2. Quiz 🤔</button>
         <button class="primary" onclick="startGame(3)">3. Escolta 🎧</button>
         <button class="primary" onclick="startGame(4)">4. Parelles 🔗</button>
-        <hr style="margin: 15px; border: 0; border-top: 2px dashed #ccc;">
-        <button onclick="showScreen('config')">Configuració ⚙️</button>
+        <hr style="margin: 20px; border: 0; border-top: 2px dashed #ccc;">
+        <button onclick="showConfig()">Configuració ⚙️</button>
         <button onclick="showAlbum()">El meu Àlbum 📸</button>
+    </div>
+
+    <div id="config" class="screen">
+        <h2>Configuració ⚙️</h2>
+        <p>Paraules per cada tema:</p>
+        <select id="words-per-cat">
+            <option value="1">1 paraula</option>
+            <option value="2">2 paraules</option>
+            <option value="3">3 paraules</option>
+            <option value="5">5 paraules</option>
+            <option value="8">8 paraules</option>
+            <option value="12">12 paraules</option>
+        </select>
+        <button class="save" onclick="saveConfig()">Guardar Canvis</button>
+        <button onclick="showMenu()">Cancel·lar</button>
+    </div>
+
+    <div id="game" class="screen">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <button style="width:50px; padding:5px; margin:0;" onclick="showMenu()">🏠</button>
+            <div id="progress-text">0 / 0</div>
+            <div id="lives-text">❌: 0</div>
+        </div>
+        <h2 id="mode-title"></h2>
+        <div id="game-content"></div>
+        <div id="feedback" class="feedback-msg"></div>
+    </div>
+
+    <div id="album" class="screen">
+        <h2 id="album-title">Àlbum de Cromos 🏆</h2>
+        <p id="stats-text"></p>
+        <button id="save-admin-btn" style="display:none;" class="save" onclick="exitAdminMode()">💾 Guardar Canvis</button>
+        <div class="gallery" id="sticker-gallery"></div>
+        <div id="album-controls" style="margin-top:20px;">
+            <button class="primary" onclick="showMenu()">Tornar al Inici 🏠</button>
+            <br><br>
+            <small style="color:#ccc; cursor:pointer" onclick="adminMode()">🔒 Admin</small>
+        </div>
+    </div>
+</div>
+
+<script>
+    const vocabulary = [
+        { cat: "COLORS", words: [{en:"red", ca:"vermell"}, {en:"orange", ca:"taronja"}, {en:"yellow", ca:"groc"}, {en:"green", ca:"verd"}, {en:"blue", ca:"blau"}, {en:"purple", ca:"lila"}, {en:"pink", ca:"rosa"}, {en:"brown", ca:"marró"}, {en:"white", ca:"blanc"}, {en:"black", ca:"negre"}]},
+        { cat: "NUMBERS", words: [{en:"one", ca:"u"}, {en:"two", ca:"dos"}, {en:"three", ca:"tres"}, {en:"four", ca:"quatre"}, {en:"five", ca:"cinc"}, {en:"six", ca:"sis"}, {en:"seven", ca:"set"}, {en:"eight", ca:"vuit"}, {en:"nine", ca:"nou"}, {en:"ten", ca:"deu"}, {en:"eleven", ca:"onze"}, {en:"twelve", ca:"dotze"}, {en:"thirteen", ca:"tretze"}, {en:"fourteen", ca:"catorze"}, {en:"fifteen", ca:"quinze"}, {en:"sixteen", ca:"setze"}, {en:"seventeen", ca:"disset"}, {en:"eighteen", ca:"divuit"}, {en:"nineteen", ca:"dinou"}, {en:"twenty", ca:"vint"}]},
+        { cat: "DAYS", words: [{en:"monday", ca:"dilluns"}, {en:"tuesday", ca:"dimarts"}, {en:"wednesday", ca:"dimecres"}, {en:"thursday", ca:"dijous"}, {en:"friday", ca:"divendres"}, {en:"saturday", ca:"dissabte"}, {en:"sunday", ca:"diumenge"}, {en:"weekend", ca:"cap de setmana"}]},
+        { cat: "MONTHS", words: [{en:"january", ca:"gener"}, {en:"february", ca:"febrer"}, {en:"march", ca:"març"}, {en:"april", ca:"abril"}, {en:"may", ca:"maig"}, {en:"june", ca:"juny"}, {en:"july", ca:"juliol"}, {en:"august", ca:"agost"}, {en:"september", ca:"septembre"}, {en:"october", ca:"octubre"}, {en:"november", ca:"novembre"}, {en:"december", ca:"desembre"}]},
+        { cat: "WEATHER", words: [{en:"sunny", ca:"assolellat"}, {en:"cloudy", ca:"nuvolat"}, {en:"windy", ca:"ventós"}, {en:"stormy", ca:"tempesta"}, {en:"rainy", ca:"plujós"}, {en:"snowy", ca:"neu"}, {en:"hot", ca:"calor"}, {en:"cold", ca:"fred"}]},
+        { cat: "CLASSROOM", words: [{en:"pencil", ca:"llapis"}, {en:"pen", ca:"bolígraf"}, {en:"rubber", ca:"goma d'esborrar"}, {en:"pencil sharpener", ca:"maquineta"}, {en:"glue", ca:"barra d'enganxar"}, {en:"scissors", ca:"tisores"}, {en:"ruler", ca:"regle"}, {en:"coloured pencil", ca:"llapis de colors"}, {en:"markers", ca:"retoladors"}]}
+    ];
+
+    let unlocked = JSON.parse(localStorage.getItem('eng_adv_v9')) || [];
+    let wordsPerCat = parseInt(localStorage.getItem('eng_config_limit')) || 2;
+    let currentMode, gameQueue, currentIndex, errors, isAdmin = false;
+    let selectedCat = null, selectedEng = null, matchedCount = 0;
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const target = document.getElementById(id);
+        if(target) target.classList.add('active');
+    }
+
+    function showMenu() { showScreen('menu'); }
+    function showConfig() { 
+        document.getElementById('words-per-cat').value = wordsPerCat;
+        showScreen('config'); 
+    }
+    function saveConfig() {
+        wordsPerCat = parseInt(document.getElementById('words-per-cat').value);
+        localStorage.setItem('eng_
