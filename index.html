@@ -2,40 +2,87 @@
 <html lang="ca">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Adventure 🇬🇧</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>English Adventure 🇬🇧 v13</title>
     <style>
-        :root { --bg: #fdf6e3; --p: #ff85a2; --s: #4ecdc4; --txt: #2d3436; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--txt); margin: 0; text-align: center; user-select: none; }
-        #app { width: 100%; max-width: 600px; margin: auto; padding: 20px; box-sizing: border-box; }
+        :root { 
+            --bg: #fdf6e3; 
+            --p: #ff85a2; 
+            --s: #4ecdc4; 
+            --txt: #2d3436; 
+        }
+
+        /* Resets per a iPhone i estils generals */
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: var(--bg); 
+            color: var(--txt); 
+            margin: 0; 
+            text-align: center; 
+            user-select: none; 
+        }
+
+        button, input, select { -webkit-appearance: none; appearance: none; }
+
+        #app { width: 100%; max-width: 600px; margin: auto; padding: 20px; }
         .screen { display: none; }
-        .active { display: block; }
-        button { background: var(--s); border: none; border-radius: 15px; padding: 15px; color: white; font-weight: bold; cursor: pointer; margin: 8px; width: 85%; box-shadow: 0 4px #3baea5; font-size: 1.1rem; }
+        .active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        button { 
+            background: var(--s); border: none; border-radius: 15px; 
+            padding: 15px; color: white; font-weight: bold; cursor: pointer; 
+            margin: 8px; width: 85%; box-shadow: 0 4px #3baea5; font-size: 1.1rem; 
+        }
         button:active { transform: translateY(2px); box-shadow: 0 2px #3baea5; }
         button.primary { background: var(--p); box-shadow: 0 4px #e06d8a; }
         button.save { background: #27ae60; box-shadow: 0 4px #1e8449; }
-        input { padding: 15px; border-radius: 10px; border: 2px solid var(--s); width: 80%; font-size: 1.2rem; text-align: center; }
-        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; margin-top: 20px; }
-        .sticker { aspect-ratio: 1/1; background: white; border: 1px solid #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 0.7rem; }
-        .sticker img { width: 100%; height: 100%; object-fit: cover; }
-        .sticker.locked { background-color: #eee; 
-            background-image: url('pokeball.png'); /* Tu imagen de fondo */
-            background-size: cover;
-            background-position: center;
-            color: white;
-            font-weight: 900;
-            font-size: 1.3rem;
-            /* Esto crea un borde negro muy fuerte alrededor de las letras */
-            text-shadow: 
-                -2px -2px 0 #000,  
-                 2px -2px 0 #000,
-                -2px  2px 0 #000,
-                 2px  2px 0 #000,
-                 0px 0px 8px rgba(0,0,0,1);
+
+        input { padding: 15px; border-radius: 10px; border: 2px solid var(--s); width: 85%; font-size: 1.2rem; text-align: center; margin-bottom: 10px; }
+
+        /* Àlbum i Cromos */
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; margin-top: 20px; }
+        .sticker { 
+            aspect-ratio: 1/1; background: white; border: 1px solid #ddd; 
+            border-radius: 10px; display: flex; align-items: center; 
+            justify-content: center; overflow: hidden; position: relative;
         }
+        .sticker img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Cromo bloquejat amb fondo.png */
+        .sticker.locked { 
+            background-image: url('fondo.png'); 
+            background-size: cover; background-position: center;
+            color: white; font-weight: bold; font-size: 1.2rem;
+        }
+        .sticker.locked::after {
+            content: ""; position: absolute; width: 35px; height: 35px;
+            background: rgba(0,0,0,0.4); border-radius: 50%; z-index: 0;
+        }
+
         .admin-editing .sticker { cursor: pointer; border: 2px dashed var(--p); }
+
+        /* Lògica de premis final */
+        .won-list { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 20px 0; }
+        .sticker-won { 
+            position: relative; width: 85px; aspect-ratio: 1/1; 
+            background: white; border-radius: 10px; border: 2px solid var(--p); overflow: hidden; 
+        }
+        .sticker-won img { width: 100%; height: 100%; object-fit: cover; }
+        .new-badge { 
+            position: absolute; top: 0; left: 0; background: #ffe66d; color: #000; 
+            font-size: 0.7rem; font-weight: bold; padding: 2px 6px; 
+            border-bottom-right-radius: 8px; z-index: 2; box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+
+        /* Matching Game */
         .matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .match-card { background: white; padding: 15px 5px; border: 2px solid #ddd; border-radius: 10px; cursor: pointer; min-height: 50px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .match-card { 
+            background: white; padding: 15px 5px; border: 2px solid #ddd; 
+            border-radius: 12px; cursor: pointer; min-height: 55px; 
+            display: flex; align-items: center; justify-content: center; font-weight: bold; 
+        }
         .match-card.selected { border-color: var(--p); background: #fff0f3; }
         .match-card.correct { border-color: var(--s); background: #e8faf8; color: #ccc; }
     </style>
@@ -49,54 +96,60 @@
         <button class="primary" onclick="startGame(2)">2. Quiz 🤔</button>
         <button class="primary" onclick="startGame(3)">3. Escolta 🎧</button>
         <button class="primary" onclick="startGame(4)">4. Parelles 🔗</button>
-        <hr>
+        <hr style="margin:20px; border:0; border-top:1px dashed #ccc">
         <button onclick="goToScreen('config')">Configuració ⚙️</button>
-        <button onclick="openAlbum()">Àlbum 📸</button>
+        <button onclick="openAlbum()">El meu Àlbum 📸</button>
     </div>
 
     <div id="config" class="screen">
         <h2>Configuració ⚙️</h2>
         <p>Paraules per tema:</p>
-        <select id="selLimit" style="padding:10px; font-size:1.2rem; width:80%">
-            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-            <option value="5">5</option><option value="8">8</option><option value="12">12</option>
+        <select id="selLimit" style="padding:12px; font-size:1.2rem; width:80%; border-radius:10px;">
+            <option value="1">1 paraula</option>
+            <option value="2">2 paraules</option>
+            <option value="3">3 paraules</option>
+            <option value="5">5 paraules</option>
+            <option value="8">8 paraules</option>
+            <option value="12">12 paraules</option>
         </select>
         <br><br>
-        <button class="save" onclick="saveConfig()">Guardar</button>
+        <button class="save" onclick="saveConfig()">Guardar Canvis</button>
+        <button onclick="goToScreen('menu')">Enrere</button>
     </div>
 
     <div id="game" class="screen">
-        <div style="display:flex; justify-content: space-between; margin-bottom:10px">
-            <button style="width:50px; margin:0" onclick="goToScreen('menu')">🏠</button>
-            <div id="prog">0/0</div>
-            <div id="errs">❌: 0</div>
+        <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:15px">
+            <button style="width:50px; padding:8px; margin:0" onclick="goToScreen('menu')">🏠</button>
+            <div id="prog" style="font-weight:bold">0/0</div>
+            <div id="errs" style="color:#e06d8a; font-weight:bold">❌: 0</div>
         </div>
         <h2 id="mTitle"></h2>
         <div id="gCont"></div>
-        <div id="fb" style="font-weight:bold; margin:15px; min-height:20px"></div>
+        <div id="fb" style="height:25px; margin:15px; font-weight:bold"></div>
     </div>
 
     <div id="album" class="screen">
         <h2 id="aTitle">El meu Àlbum 🏆</h2>
         <button id="btnSaveAdmin" class="save" style="display:none" onclick="exitAdmin()">💾 Guardar Canvis</button>
+        <div id="stats" style="margin-bottom:10px; font-weight:bold"></div>
         <div class="gallery" id="gal"></div>
-        <div id="aCtrl" style="margin-top:20px">
-            <button class="primary" onclick="goToScreen('menu')">Tornar 🏠</button>
+        <div id="aCtrl" style="margin-top:25px">
+            <button class="primary" onclick="goToScreen('menu')">Inici 🏠</button>
             <br><br>
-            <small style="color:#ccc; cursor:pointer" onclick="enterAdmin()">🔒 Admin</small>
+            <small style="color:#ccc; cursor:pointer" onclick="enterAdmin()">🔒 Admin Mode</small>
         </div>
     </div>
 </div>
 
 <script>
-    // Variables de estado
+    // VOCABULARI COMPLET
     const vocab = [
         { c: "COLORS", w: [{e:"red", k:"vermell"}, {e:"green", k:"verd"}, {e:"blue", k:"blau"}, {e:"yellow", k:"groc"}, {e:"orange", k:"taronja"}, {e:"purple", k:"lila"}, {e:"pink", k:"rosa"}, {e:"brown", k:"marró"}, {e:"black", k:"negre"}, {e:"white", k:"blanc"}]},
         { c: "NUMBERS", w: [{e:"one", k:"u"}, {e:"two", k:"dos"}, {e:"three", k:"tres"}, {e:"four", k:"quatre"}, {e:"five", k:"cinc"}, {e:"six", k:"sis"}, {e:"seven", k:"set"}, {e:"eight", k:"vuit"}, {e:"nine", k:"nou"}, {e:"ten", k:"deu"}]},
         { c: "DAYS", w: [{e:"monday", k:"dilluns"}, {e:"tuesday", k:"dimarts"}, {e:"wednesday", k:"dimecres"}, {e:"thursday", k:"dijous"}, {e:"friday", k:"divendres"}, {e:"saturday", k:"dissabte"}, {e:"sunday", k:"diumenge"}]},
         { c: "MONTHS", w: [{e:"january", k:"gener"}, {e:"february", k:"febrer"}, {e:"march", k:"març"}, {e:"april", k:"abril"}, {e:"may", k:"maig"}, {e:"june", k:"juny"}, {e:"july", k:"juliol"}, {e:"august", k:"agost"}, {e:"september", k:"setembre"}, {e:"october", k:"octubre"}, {e:"november", k:"novembre"}, {e:"december", k:"desembre"}]},
         { c: "WEATHER", w: [{e:"sunny", k:"assolellat"}, {e:"cloudy", k:"nuvolat"}, {e:"windy", k:"ventós"}, {e:"rainy", k:"plujós"}, {e:"cold", k:"fred"}, {e:"hot", k:"calor"}]},
-        { c: "SCHOOL", w: [{e:"pencil", k:"llapis"}, {e:"pen", k:"bolígraf"}, {e:"rubber", k:"goma"}, {e:"ruler", k:"regle"}, {e:"book", k:"llibre"}]}
+        { c: "SCHOOL", w: [{e:"pencil", k:"llapis"}, {e:"pen", k:"bolígraf"}, {e:"rubber", k:"goma"}, {e:"ruler", k:"regle"}, {e:"book", k:"llibre"}, {e:"scissors", k:"tisores"}]}
     ];
 
     let unlocked = JSON.parse(localStorage.getItem('eng_v12_unl')) || [];
@@ -104,10 +157,10 @@
     let queue = [], curIdx = 0, mistakes = 0, isAdmin = false, mode = 0;
     let s1 = null, s2 = null, matches = 0;
 
-    // Funciones de navegación
     function goToScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        if(id === 'config') document.getElementById('selLimit').value = limit;
     }
 
     function saveConfig() {
@@ -131,23 +184,23 @@
         if(curIdx >= queue.length) return endG();
         const item = queue[curIdx];
         const cont = document.getElementById('gCont');
-        document.getElementById('prog').innerText = `${curIdx+1}/${queue.length}`;
+        document.getElementById('prog').innerText = `${curIdx+1} / ${queue.length}`;
         document.getElementById('errs').innerText = `❌: ${mistakes}`;
         document.getElementById('fb').innerHTML = "";
         
         let h = `<h3>"${item.k}"</h3>`;
         if(mode === 1) {
-            h += `<input type="text" id="ai" autocomplete="off"><br><button class="primary" onclick="check(document.getElementById('ai').value)">Enviar</button>`;
+            h += `<input type="text" id="ai" autocomplete="off" spellcheck="false"><br><button class="primary" onclick="check(document.getElementById('ai').value)">Enviar</button>`;
         } else if(mode === 2) {
             let opts = [item.e];
             while(opts.length < 4) {
-                let r = vocab[Math.floor(Math.random()*6)].w[0].e;
+                let r = vocab[Math.floor(Math.random()*6)].w[Math.floor(Math.random()*5)].e;
                 if(!opts.includes(r)) opts.push(r);
             }
             opts.sort(() => 0.5 - Math.random());
             opts.forEach(o => h += `<button onclick="check('${o}')">${o}</button>`);
         } else if(mode === 3) {
-            h = `<button style="font-size:2rem" onclick="speak('${item.e}')">🔊</button><br><input type="text" id="ai" autocomplete="off"><br><button class="primary" onclick="check(document.getElementById('ai').value)">OK</button>`;
+            h = `<button style="font-size:2.5rem; width:100px; height:100px; border-radius:50%" onclick="speak('${item.e}')">🔊</button><br><br><input type="text" id="ai" autocomplete="off" spellcheck="false"><br><button class="primary" onclick="check(document.getElementById('ai').value)">Comprovar</button>`;
             speak(item.e);
         }
         cont.innerHTML = h;
@@ -157,17 +210,18 @@
     function check(u) {
         const it = queue[curIdx];
         if(u.toLowerCase().trim() === it.e.toLowerCase()) {
-            document.getElementById('fb').innerHTML = "✅ CORRECTE!";
+            document.getElementById('fb').innerHTML = "<span style='color:green'>✅ CORRECTE!</span>";
             setTimeout(() => { curIdx++; drawQuest(); }, 800);
         } else {
             mistakes++;
-            document.getElementById('fb').innerHTML = `❌ Era: ${it.e}`;
+            document.getElementById('fb').innerHTML = `<span style='color:red'>❌ Era: ${it.e}</span>`;
             setTimeout(() => { curIdx++; drawQuest(); }, 1500);
         }
     }
 
     function drawMatch() {
         const cont = document.getElementById('gCont');
+        document.getElementById('prog').innerText = `0 / ${queue.length}`;
         let ca = queue.map(i => ({t:i.k, id:i.e})).sort(() => 0.5-Math.random());
         let en = queue.map(i => ({t:i.e, id:i.e})).sort(() => 0.5-Math.random());
         let h = '<div class="matching-container"><div>';
@@ -187,10 +241,12 @@
             if(s1.id === s2.id) {
                 s1.el.classList.add('correct'); s2.el.classList.add('correct');
                 matches++; s1=null; s2=null;
+                document.getElementById('prog').innerText = `${matches} / ${queue.length}`;
                 if(matches === queue.length) setTimeout(endG, 800);
             } else {
-                mistakes++; let a=s1.el, b=s2.el;
-                setTimeout(() => { a.classList.remove('selected'); b.classList.remove('selected'); }, 400);
+                mistakes++; document.getElementById('errs').innerText = `❌: ${mistakes}`;
+                let a=s1.el, b=s2.el; a.classList.add('wrong'); b.classList.add('wrong');
+                setTimeout(() => { a.classList.remove('selected', 'wrong'); b.classList.remove('selected', 'wrong'); }, 400);
                 s1=null; s2=null;
             }
         }
@@ -198,24 +254,64 @@
 
     function speak(t) { 
         const m = new SpeechSynthesisUtterance(t); 
-        m.lang = 'en-GB'; window.speechSynthesis.speak(m); 
+        m.lang = 'en-GB'; m.rate = 0.9; window.speechSynthesis.speak(m); 
     }
 
     function endG() {
-        let n = (mistakes === 0) ? 3 : (mistakes < 4 ? 1 : 0);
-        let nIds = [];
-        for(let i=0; i<n; i++) {
-            let id = Math.floor(Math.random()*151)+1;
-            if(!unlocked.includes(id)) { unlocked.push(id); nIds.push(id); }
+        const total = queue.length;
+        const allowed = Math.floor(total / 6);
+        let wonList = [];
+
+        if (mistakes <= allowed) {
+            // 1. CROMO NOU GARANTIT
+            let available = [];
+            for (let i = 1; i <= 151; i++) { if (!unlocked.includes(i)) available.push(i); }
+            
+            if (available.length > 0) {
+                let newId = available[Math.floor(Math.random() * available.length)];
+                unlocked.push(newId);
+                wonList.push({ id: newId, isNew: true });
+            }
+
+            // 2. EXTRAS PER PERFECT
+            if (mistakes === 0) {
+                for (let i = 0; i < 2; i++) {
+                    let rid = Math.floor(Math.random() * 151) + 1;
+                    let isN = !unlocked.includes(rid);
+                    if (isN) unlocked.push(rid);
+                    wonList.push({ id: rid, isNew: isN });
+                }
+            }
         }
+
         localStorage.setItem('eng_v12_unl', JSON.stringify(unlocked));
-        document.getElementById('gCont').innerHTML = `<h2>Molt bé!</h2><p>+${nIds.length} cromos</p><button onclick="openAlbum()">Anar a l'Àlbum</button>`;
+
+        let h = `<h2>${mistakes <= allowed ? '🌟 Excel·lent!' : '☁️ Continua practicant'}</h2>`;
+        h += `<p>Has tingut ${mistakes} errors.<br><small>(Màxim per premi: ${allowed})</small></p>`;
+        
+        if (wonList.length > 0) {
+            h += `<div class="won-list">`;
+            wonList.forEach(item => {
+                let n = String(item.id).padStart(3, '0');
+                h += `<div class="sticker-won">
+                    ${item.isNew ? '<div class="new-badge">NEW</div>' : ''}
+                    <img src="recompenses/${n}.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZGRkIi8+PC9zdmc+'">
+                </div>`;
+            });
+            h += `</div>`;
+        }
+
+        h += `<button class="primary" onclick="openAlbum()">Veure Àlbum 📸</button>`;
+        h += `<button onclick="goToScreen('menu')">Menú Principal 🏠</button>`;
+        document.getElementById('gCont').innerHTML = h;
+        document.getElementById('fb').innerHTML = "";
     }
 
     function openAlbum() { goToScreen('album'); drawAlb(); }
 
     function drawAlb() {
         const g = document.getElementById('gal'); g.innerHTML = "";
+        document.getElementById('stats').innerText = `${unlocked.length} / 151 Cromos`;
         for(let i=1; i<=151; i++) {
             let isU = unlocked.includes(i);
             let d = document.createElement('div');
@@ -224,13 +320,15 @@
             if(isU) {
                 let n = String(i).padStart(3, '0');
                 d.innerHTML = `<img src="recompenses/${n}.png" onerror="this.parentElement.innerHTML='🖼️<br>${n}'">`;
-            } else { d.innerText = i; }
+            } else { 
+                d.innerHTML = `<span style="z-index:1; position:relative;">${i}</span>`; 
+            }
             g.appendChild(d);
         }
     }
 
     function enterAdmin() {
-        if(prompt("Pass:") === "TercerDelPrat2026") {
+        if(prompt("Password:") === "Tercer2026") {
             isAdmin = true;
             document.getElementById('album').classList.add('admin-editing');
             document.getElementById('btnSaveAdmin').style.display = 'block';
