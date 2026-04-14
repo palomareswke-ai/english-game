@@ -39,7 +39,18 @@
         button.primary { background: var(--p); box-shadow: 0 4px #e06d8a; }
         button.save { background: #27ae60; box-shadow: 0 4px #1e8449; }
 
-        input { padding: 15px; border-radius: 10px; border: 2px solid var(--s); width: 85%; font-size: 1.2rem; text-align: center; margin-bottom: 10px; }
+        input[type="text"] { padding: 15px; border-radius: 10px; border: 2px solid var(--s); width: 85%; font-size: 1.2rem; text-align: center; margin-bottom: 10px; }
+
+        /* Apartat Repàs */
+        .review-controls { background: white; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #ddd; }
+        .review-list { text-align: left; background: white; border-radius: 15px; overflow: hidden; border: 1px solid #ddd; }
+        .review-row { display: grid; grid-template-columns: 1fr auto 1.2fr auto auto; gap: 8px; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+        .review-row:nth-child(even) { background: #fafafa; }
+        .review-row span { font-size: 0.9rem; font-weight: bold; }
+        .review-row input { margin: 0; width: 100%; padding: 8px; font-size: 0.9rem; border-radius: 8px; border: 1px solid #ccc; text-align: center; }
+        .btn-mini { width: 35px; height: 35px; padding: 0; margin: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: none; }
+        .status-icon { font-size: 1.2rem; width: 20px; text-align: center; }
+        .eye-text { font-size: 0.8rem; color: var(--p); font-style: italic; display: none; margin-top: 5px; }
 
         /* Àlbum i Cromos */
         .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; margin-top: 20px; }
@@ -50,7 +61,6 @@
         }
         .sticker img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Cromo bloquejat amb fondo.png */
         .sticker.locked { 
             background-image: url('pokeball.png'); 
             background-size: cover; background-position: center;
@@ -63,7 +73,6 @@
 
         .admin-editing .sticker { cursor: pointer; border: 2px dashed var(--p); }
 
-        /* Lògica de premis final */
         .won-list { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 20px 0; }
         .sticker-won { 
             position: relative; width: 85px; aspect-ratio: 1/1; 
@@ -76,7 +85,6 @@
             border-bottom-right-radius: 8px; z-index: 2; box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
         }
 
-        /* Matching Game */
         .matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .match-card { 
             background: white; padding: 15px 5px; border: 2px solid #ddd; 
@@ -96,9 +104,28 @@
         <button class="primary" onclick="startGame(2)">2. Quiz 🤔</button>
         <button class="primary" onclick="startGame(3)">3. Escolta 🎧</button>
         <button class="primary" onclick="startGame(4)">4. Parelles 🔗</button>
+        <button style="background-color: #9b59b6; box-shadow: 0 4px #8e44ad;" onclick="openReview()">📚 Repàs (Sense premis)</button>
         <hr style="margin:20px; border:0; border-top:1px dashed #ccc">
         <button onclick="goToScreen('config')">Configuració ⚙️</button>
         <button onclick="openAlbum()">El meu Àlbum 📸</button>
+    </div>
+
+    <div id="review" class="screen">
+        <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:15px">
+            <button style="width:50px; padding:8px; margin:0" onclick="goToScreen('menu')">🏠</button>
+            <h2 style="margin:0">📚 Repàs</h2>
+            <div style="width:50px"></div>
+        </div>
+
+        <div class="review-controls">
+            <select id="revCat" onchange="renderReview()" style="width:100%; padding:10px; border-radius:10px; margin-bottom:10px; font-weight:bold; border:2px solid var(--s)">
+            </select>
+            <label style="font-weight:bold; cursor:pointer">
+                <input type="checkbox" id="revPrac" onchange="renderReview()" checked> Practicar (Escriure)
+            </label>
+        </div>
+
+        <div class="review-list" id="revList"></div>
     </div>
 
     <div id="config" class="screen">
@@ -142,7 +169,6 @@
 </div>
 
 <script>
-    // VOCABULARI COMPLET
     const vocab = [
         { c: "COLORS", w: [{e:"red", k:"vermell"}, {e:"green", k:"verd"}, {e:"blue", k:"blau"}, {e:"yellow", k:"groc"}, {e:"orange", k:"taronja"}, {e:"purple", k:"lila"}, {e:"pink", k:"rosa"}, {e:"brown", k:"marró"}, {e:"black", k:"negre"}, {e:"white", k:"blanc"}]},
         { c: "NUMBERS", w: [{e:"one", k:"u"}, {e:"two", k:"dos"}, {e:"three", k:"tres"}, {e:"four", k:"quatre"}, {e:"five", k:"cinc"}, {e:"six", k:"sis"}, {e:"seven", k:"set"}, {e:"eight", k:"vuit"}, {e:"nine", k:"nou"}, {e:"ten", k:"deu"}]},
@@ -163,6 +189,60 @@
         if(id === 'config') document.getElementById('selLimit').value = limit;
     }
 
+    // --- LOGICA REPAS ---
+    function openReview() {
+        const sel = document.getElementById('revCat');
+        sel.innerHTML = vocab.map(cat => `<option value="${cat.c}">${cat.c}</option>`).join('');
+        renderReview();
+        goToScreen('review');
+    }
+
+    function renderReview() {
+        const catName = document.getElementById('revCat').value;
+        const practiceOn = document.getElementById('revPrac').checked;
+        const listCont = document.getElementById('revList');
+        const data = vocab.find(v => v.c === catName).w;
+
+        let html = "";
+        data.forEach((item, index) => {
+            html += `
+            <div class="review-row">
+                <span>${item.k}</span>
+                <button class="btn-mini" onclick="speak('${item.e}')">🔊</button>
+                <input type="text" 
+                       id="inp${index}" 
+                       placeholder="${practiceOn ? '?' : ''}" 
+                       value="${practiceOn ? '' : item.e}" 
+                       ${practiceOn ? '' : 'disabled'} 
+                       oninput="checkLive(this, '${item.e}', 'st${index}')"
+                       autocomplete="off" spellcheck="false">
+                <div class="status-icon" id="st${index}"></div>
+                <button class="btn-mini" style="background:#eee; color:black;" onclick="toggleEye('eye${index}')">👁️</button>
+                <div class="eye-text" id="eye${index}" style="grid-column: 1 / span 5; margin-left: 10px;">${item.e}</div>
+            </div>`;
+        });
+        listCont.innerHTML = html;
+    }
+
+    function checkLive(el, correct, statusId) {
+        const val = el.value.toLowerCase().trim();
+        const st = document.getElementById(statusId);
+        if(val === "") { st.innerHTML = ""; el.style.borderColor = "#ccc"; return; }
+        if(val === correct.toLowerCase()) {
+            st.innerHTML = "✅";
+            el.style.borderColor = "green";
+        } else {
+            st.innerHTML = "❌";
+            el.style.borderColor = "red";
+        }
+    }
+
+    function toggleEye(id) {
+        const el = document.getElementById(id);
+        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // --- LOGICA JOC ---
     function saveConfig() {
         limit = parseInt(document.getElementById('selLimit').value);
         localStorage.setItem('eng_v12_lim', limit);
@@ -194,7 +274,7 @@
         } else if(mode === 2) {
             let opts = [item.e];
             while(opts.length < 4) {
-                let r = vocab[Math.floor(Math.random()*6)].w[Math.floor(Math.random()*5)].e;
+                let r = vocab[Math.floor(Math.random()*vocab.length)].w[Math.floor(Math.random()*vocab[0].w.length)].e;
                 if(!opts.includes(r)) opts.push(r);
             }
             opts.sort(() => 0.5 - Math.random());
@@ -245,8 +325,8 @@
                 if(matches === queue.length) setTimeout(endG, 800);
             } else {
                 mistakes++; document.getElementById('errs').innerText = `❌: ${mistakes}`;
-                let a=s1.el, b=s2.el; a.classList.add('wrong'); b.classList.add('wrong');
-                setTimeout(() => { a.classList.remove('selected', 'wrong'); b.classList.remove('selected', 'wrong'); }, 400);
+                let a=s1.el, b=s2.el;
+                setTimeout(() => { a.classList.remove('selected'); b.classList.remove('selected'); }, 400);
                 s1=null; s2=null;
             }
         }
@@ -261,19 +341,14 @@
         const total = queue.length;
         const allowed = Math.floor(total / 6);
         let wonList = [];
-
         if (mistakes <= allowed) {
-            // 1. CROMO NOU GARANTIT
             let available = [];
             for (let i = 1; i <= 151; i++) { if (!unlocked.includes(i)) available.push(i); }
-            
             if (available.length > 0) {
                 let newId = available[Math.floor(Math.random() * available.length)];
                 unlocked.push(newId);
                 wonList.push({ id: newId, isNew: true });
             }
-
-            // 2. EXTRAS PER PERFECT
             if (mistakes === 0) {
                 for (let i = 0; i < 2; i++) {
                     let rid = Math.floor(Math.random() * 151) + 1;
@@ -283,12 +358,9 @@
                 }
             }
         }
-
         localStorage.setItem('eng_v12_unl', JSON.stringify(unlocked));
-
         let h = `<h2>${mistakes <= allowed ? '🌟 Excel·lent!' : '☁️ Continua practicant'}</h2>`;
-        h += `<p>Has tingut ${mistakes} errors.<br><small>(Màxim per premi: ${allowed})</small></p>`;
-        
+        h += `<p>Errors: ${mistakes} (Màxim: ${allowed})</p>`;
         if (wonList.length > 0) {
             h += `<div class="won-list">`;
             wonList.forEach(item => {
@@ -300,15 +372,12 @@
             });
             h += `</div>`;
         }
-
         h += `<button class="primary" onclick="openAlbum()">Veure Àlbum 📸</button>`;
         h += `<button onclick="goToScreen('menu')">Menú Principal 🏠</button>`;
         document.getElementById('gCont').innerHTML = h;
-        document.getElementById('fb').innerHTML = "";
     }
 
     function openAlbum() { goToScreen('album'); drawAlb(); }
-
     function drawAlb() {
         const g = document.getElementById('gal'); g.innerHTML = "";
         document.getElementById('stats').innerText = `${unlocked.length} / 151 Cromos`;
@@ -320,9 +389,7 @@
             if(isU) {
                 let n = String(i).padStart(3, '0');
                 d.innerHTML = `<img src="recompenses/${n}.png" onerror="this.parentElement.innerHTML='🖼️<br>${n}'">`;
-            } else { 
-                d.innerHTML = `<span style="z-index:1; position:relative;">${i}</span>`; 
-            }
+            } else { d.innerHTML = `<span style="z-index:1; position:relative;">${i}</span>`; }
             g.appendChild(d);
         }
     }
