@@ -171,7 +171,12 @@
 <script>
     const vocab = [
         { c: "COLORS", w: [{e:"red", k:"vermell"}, {e:"green", k:"verd"}, {e:"blue", k:"blau"}, {e:"yellow", k:"groc"}, {e:"orange", k:"taronja"}, {e:"purple", k:"lila"}, {e:"pink", k:"rosa"}, {e:"brown", k:"marró"}, {e:"black", k:"negre"}, {e:"white", k:"blanc"}]},
-        { c: "NUMBERS", w: [{e:"one", k:"u"}, {e:"two", k:"dos"}, {e:"three", k:"tres"}, {e:"four", k:"quatre"}, {e:"five", k:"cinc"}, {e:"six", k:"sis"}, {e:"seven", k:"set"}, {e:"eight", k:"vuit"}, {e:"nine", k:"nou"}, {e:"ten", k:"deu"}]},
+        { c: "NUMBERS", w: [
+            {e:"one", k:"u"}, {e:"two", k:"dos"}, {e:"three", k:"tres"}, {e:"four", k:"quatre"}, {e:"five", k:"cinc"}, 
+            {e:"six", k:"sis"}, {e:"seven", k:"set"}, {e:"eight", k:"vuit"}, {e:"nine", k:"nou"}, {e:"ten", k:"deu"},
+            {e:"eleven", k:"onze"}, {e:"twelve", k:"dotze"}, {e:"thirteen", k:"tretze"}, {e:"fourteen", k:"catorze"}, {e:"fifteen", k:"quinze"}, 
+            {e:"sixteen", k:"setze"}, {e:"seventeen", k:"disset"}, {e:"eighteen", k:"divuit"}, {e:"nineteen", k:"dinou"}, {e:"twenty", k:"vint"}
+        ]},
         { c: "DAYS", w: [{e:"monday", k:"dilluns"}, {e:"tuesday", k:"dimarts"}, {e:"wednesday", k:"dimecres"}, {e:"thursday", k:"dijous"}, {e:"friday", k:"divendres"}, {e:"saturday", k:"dissabte"}, {e:"sunday", k:"diumenge"}]},
         { c: "MONTHS", w: [{e:"january", k:"gener"}, {e:"february", k:"febrer"}, {e:"march", k:"març"}, {e:"april", k:"abril"}, {e:"may", k:"maig"}, {e:"june", k:"juny"}, {e:"july", k:"juliol"}, {e:"august", k:"agost"}, {e:"september", k:"setembre"}, {e:"october", k:"octubre"}, {e:"november", k:"novembre"}, {e:"december", k:"desembre"}]},
         { c: "WEATHER", w: [{e:"sunny", k:"assolellat"}, {e:"cloudy", k:"nuvolat"}, {e:"windy", k:"ventós"}, {e:"rainy", k:"plujós"}, {e:"cold", k:"fred"}, {e:"hot", k:"calor"}]},
@@ -274,7 +279,8 @@
         } else if(mode === 2) {
             let opts = [item.e];
             while(opts.length < 4) {
-                let r = vocab[Math.floor(Math.random()*vocab.length)].w[Math.floor(Math.random()*vocab[0].w.length)].e;
+                let rCat = vocab[Math.floor(Math.random()*vocab.length)];
+                let r = rCat.w[Math.floor(Math.random()*rCat.w.length)].e;
                 if(!opts.includes(r)) opts.push(r);
             }
             opts.sort(() => 0.5 - Math.random());
