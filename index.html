@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>English Adventure 🇬🇧 v13</title>
+    <title>English Adventure 🇬🇧</title>
     <style>
         :root { 
             --bg: #fdf6e3; 
@@ -12,18 +12,11 @@
             --txt: #2d3436; 
         }
 
-        /* Resets per a iPhone i estils generals */
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: var(--bg); 
-            color: var(--txt); 
-            margin: 0; 
-            text-align: center; 
-            user-select: none; 
+            background: var(--bg); color: var(--txt); margin: 0; text-align: center; user-select: none; 
         }
-
-        button, input, select { -webkit-appearance: none; appearance: none; }
 
         #app { width: 100%; max-width: 600px; margin: auto; padding: 20px; }
         .screen { display: none; }
@@ -45,57 +38,23 @@
         .review-controls { background: white; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #ddd; }
         .review-list { text-align: left; background: white; border-radius: 15px; overflow: hidden; border: 1px solid #ddd; }
         .review-row { display: grid; grid-template-columns: 1fr auto 1.2fr auto auto; gap: 8px; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
-        .review-row:nth-child(even) { background: #fafafa; }
         .review-row span { font-size: 0.9rem; font-weight: bold; }
-        .review-row input { margin: 0; width: 100%; padding: 8px; font-size: 0.9rem; border-radius: 8px; border: 1px solid #ccc; text-align: center; }
-        .btn-mini { width: 35px; height: 35px; padding: 0; margin: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: none; }
-        .status-icon { font-size: 1.2rem; width: 20px; text-align: center; }
-        .eye-text { font-size: 0.8rem; color: var(--p); font-style: italic; display: none; margin-top: 5px; }
+        .btn-mini { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: none; margin:0; }
 
         /* Config Checkboxes */
         .cat-selector { text-align: left; background: white; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin: 15px auto; width: 85%; }
-        .cat-option { display: flex; align-items: center; margin-bottom: 8px; font-weight: bold; cursor: pointer; }
-        .cat-option input { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--p); }
+        .cat-option { display: flex; align-items: center; padding: 8px 0; font-weight: bold; cursor: pointer; border-bottom: 1px solid #eee; }
+        .cat-option:last-child { border: none; }
+        .cat-option input { width: 22px; height: 22px; margin-right: 12px; accent-color: var(--p); cursor: pointer; }
 
-        /* Àlbum i Cromos */
+        /* Àlbum */
         .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; margin-top: 20px; }
-        .sticker { 
-            aspect-ratio: 1/1; background: white; border: 1px solid #ddd; 
-            border-radius: 10px; display: flex; align-items: center; 
-            justify-content: center; overflow: hidden; position: relative;
-        }
+        .sticker { aspect-ratio: 1/1; background: white; border: 1px solid #ddd; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        .sticker.locked { background-image: url('pokeball.png'); background-size: cover; background-position: center; color: white; font-weight: bold; }
         .sticker img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .sticker.locked { 
-            background-image: url('pokeball.png'); 
-            background-size: cover; background-position: center;
-            color: white; font-weight: bold; font-size: 1.2rem;
-        }
-        .sticker.locked::after {
-            content: ""; position: absolute; width: 35px; height: 35px;
-            background: rgba(0,0,0,0.4); border-radius: 50%; z-index: 0;
-        }
-
-        .admin-editing .sticker { cursor: pointer; border: 2px dashed var(--p); }
-
-        .won-list { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 20px 0; }
-        .sticker-won { 
-            position: relative; width: 85px; aspect-ratio: 1/1; 
-            background: white; border-radius: 10px; border: 2px solid var(--p); overflow: hidden; 
-        }
-        .sticker-won img { width: 100%; height: 100%; object-fit: cover; }
-        .new-badge { 
-            position: absolute; top: 0; left: 0; background: #ffe66d; color: #000; 
-            font-size: 0.7rem; font-weight: bold; padding: 2px 6px; 
-            border-bottom-right-radius: 8px; z-index: 2; box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-        }
 
         .matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .match-card { 
-            background: white; padding: 15px 5px; border: 2px solid #ddd; 
-            border-radius: 12px; cursor: pointer; min-height: 55px; 
-            display: flex; align-items: center; justify-content: center; font-weight: bold; 
-        }
+        .match-card { background: white; padding: 15px 5px; border: 2px solid #ddd; border-radius: 12px; cursor: pointer; min-height: 55px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
         .match-card.selected { border-color: var(--p); background: #fff0f3; }
         .match-card.correct { border-color: var(--s); background: #e8faf8; color: #ccc; }
     </style>
@@ -116,20 +75,12 @@
     </div>
 
     <div id="review" class="screen">
-        <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:15px">
-            <button style="width:50px; padding:8px; margin:0" onclick="goToScreen('menu')">🏠</button>
-            <h2 style="margin:0">📚 Repàs</h2>
-            <div style="width:50px"></div>
-        </div>
-
+        <button style="width:50px; float:left" onclick="goToScreen('menu')">🏠</button>
+        <h2>📚 Repàs</h2>
         <div class="review-controls">
-            <select id="revCat" onchange="renderReview()" style="width:100%; padding:10px; border-radius:10px; margin-bottom:10px; font-weight:bold; border:2px solid var(--s)">
-            </select>
-            <label style="font-weight:bold; cursor:pointer">
-                <input type="checkbox" id="revPrac" onchange="renderReview()" checked> Practicar (Escriure)
-            </label>
+            <select id="revCat" onchange="renderReview()" style="width:100%; padding:10px; border-radius:10px; margin-bottom:10px; font-weight:bold; border:2px solid var(--s)"></select>
+            <label><input type="checkbox" id="revPrac" onchange="renderReview()" checked> Practicar</label>
         </div>
-
         <div class="review-list" id="revList"></div>
     </div>
 
@@ -141,8 +92,8 @@
             <option value="2">2 paraules</option>
             <option value="3">3 paraules</option>
             <option value="5">5 paraules</option>
-            <option value="8">8 paraules</option>
-            <option value="12">12 paraules</option>
+            <option value="10">10 paraules</option>
+            <option value="20">Totes</option>
         </select>
 
         <p style="margin-top:20px"><strong>Temes actius:</strong></p>
@@ -158,21 +109,18 @@
             <div id="prog" style="font-weight:bold">0/0</div>
             <div id="errs" style="color:#e06d8a; font-weight:bold">❌: 0</div>
         </div>
-        <h2 id="mTitle"></h2>
         <div id="gCont"></div>
         <div id="fb" style="height:25px; margin:15px; font-weight:bold"></div>
     </div>
 
     <div id="album" class="screen">
         <h2 id="aTitle">El meu Àlbum 🏆</h2>
-        <button id="btnSaveAdmin" class="save" style="display:none" onclick="exitAdmin()">💾 Guardar Canvis</button>
+        <button id="btnSaveAdmin" class="save" style="display:none" onclick="exitAdmin()">💾 Guardar</button>
         <div id="stats" style="margin-bottom:10px; font-weight:bold"></div>
         <div class="gallery" id="gal"></div>
-        <div id="aCtrl" style="margin-top:25px">
-            <button class="primary" onclick="goToScreen('menu')">Inici 🏠</button>
-            <br><br>
-            <small style="color:#ccc; cursor:pointer" onclick="enterAdmin()">🔒 Admin Mode</small>
-        </div>
+        <button class="primary" onclick="goToScreen('menu')">Inici 🏠</button>
+        <br><br>
+        <small style="color:#ccc; cursor:pointer" onclick="enterAdmin()">🔒 Admin</small>
     </div>
 </div>
 
@@ -186,14 +134,13 @@
             {e:"sixteen", k:"setze"}, {e:"seventeen", k:"disset"}, {e:"eighteen", k:"divuit"}, {e:"nineteen", k:"dinou"}, {e:"twenty", k:"vint"}
         ]},
         { c: "DAYS", w: [{e:"monday", k:"dilluns"}, {e:"tuesday", k:"dimarts"}, {e:"wednesday", k:"dimecres"}, {e:"thursday", k:"dijous"}, {e:"friday", k:"divendres"}, {e:"saturday", k:"dissabte"}, {e:"sunday", k:"diumenge"}]},
-        { c: "MONTHS", w: [{e:"january", k:"gener"}, {e:"february", k:"febrer"}, {e:"march", k:"març"}, {e:"april", k:"abril"}, {e:"may", k:"maig"}, {e:"june", k:"juny"}, {e:"july", k:"juliol"}, {e:"august", k:"agost"}, {e:"september", k:"setembre"}, {e:"october", k:"octubre"}, {e:"november", k:"novembre"}, {e:"december", k:"desembre"}]},
+        { c: "MONTHS", w: [{e:"january", k:"gener"}, {e:"february", k:"febrer"}, {e:"march", k:"març"}, {e:"april", k:"abril"}, {e:"may", k:"maig"}, {e:"june", k:"juny"}, {e:"july", k:"juliol"}, {e:"august", k:"agost"}, {e:"september", k:"septembre"}, {e:"october", k:"octubre"}, {e:"november", k:"novembre"}, {e:"december", k:"desembre"}]},
         { c: "WEATHER", w: [{e:"sunny", k:"assolellat"}, {e:"cloudy", k:"nuvolat"}, {e:"windy", k:"ventós"}, {e:"rainy", k:"plujós"}, {e:"cold", k:"fred"}, {e:"hot", k:"calor"}]},
         { c: "SCHOOL", w: [{e:"pencil", k:"llapis"}, {e:"pen", k:"bolígraf"}, {e:"rubber", k:"goma"}, {e:"ruler", k:"regle"}, {e:"book", k:"llibre"}, {e:"scissors", k:"tisores"}]}
     ];
 
     let unlocked = JSON.parse(localStorage.getItem('eng_v12_unl')) || [];
     let limit = parseInt(localStorage.getItem('eng_v12_lim')) || 2;
-    // Carregar categories actives o totes per defecte
     let activeCats = JSON.parse(localStorage.getItem('eng_v12_cats')) || vocab.map(v => v.c);
     
     let queue = [], curIdx = 0, mistakes = 0, isAdmin = false, mode = 0;
@@ -205,13 +152,12 @@
         if(id === 'config') drawConfig();
     }
 
-    // --- LOGICA CONFIG ---
     function drawConfig() {
         document.getElementById('selLimit').value = limit;
         const cont = document.getElementById('catFilters');
         cont.innerHTML = vocab.map(cat => `
             <label class="cat-option">
-                <input type="checkbox" value="${cat.c}" ${activeCats.includes(cat.c) ? 'checked' : ''}>
+                <input type="checkbox" class="cat-check" value="${cat.c}" ${activeCats.includes(cat.c) ? 'checked' : ''}>
                 ${cat.c}
             </label>
         `).join('');
@@ -221,12 +167,12 @@
         limit = parseInt(document.getElementById('selLimit').value);
         localStorage.setItem('eng_v12_lim', limit);
         
-        // Recollir categories seleccionades
-        const boxes = document.querySelectorAll('#catFilters input:checked');
-        activeCats = Array.from(boxes).map(b => b.value);
-        
+        const checks = document.querySelectorAll('.cat-check');
+        activeCats = [];
+        checks.forEach(chk => { if(chk.checked) activeCats.push(chk.value); });
+
         if(activeCats.length === 0) {
-            alert("Has de seleccionar almenys un tema!");
+            alert("Tria almenys un tema!");
             return;
         }
         
@@ -234,19 +180,11 @@
         goToScreen('menu');
     }
 
-    // --- LOGICA REPAS ---
     function openReview() {
         const sel = document.getElementById('revCat');
-        // Només mostrar les categories actives
-        const filteredVocab = vocab.filter(v => activeCats.includes(v.c));
-        sel.innerHTML = filteredVocab.map(cat => `<option value="${cat.c}">${cat.c}</option>`).join('');
-        
-        if(filteredVocab.length === 0) {
-            alert("No hi ha temes actius. Ves a Configuració.");
-            goToScreen('config');
-            return;
-        }
-        
+        const filtered = vocab.filter(v => activeCats.includes(v.c));
+        if(filtered.length === 0) return goToScreen('config');
+        sel.innerHTML = filtered.map(cat => `<option value="${cat.c}">${cat.c}</option>`).join('');
         renderReview();
         goToScreen('review');
     }
@@ -257,61 +195,30 @@
         const listCont = document.getElementById('revList');
         const catData = vocab.find(v => v.c === catName);
         if(!catData) return;
-        const data = catData.w;
 
-        let html = "";
-        data.forEach((item, index) => {
-            html += `
+        listCont.innerHTML = catData.w.map((item, i) => `
             <div class="review-row">
                 <span>${item.k}</span>
                 <button class="btn-mini" onclick="speak('${item.e}')">🔊</button>
-                <input type="text" 
-                       id="inp${index}" 
-                       placeholder="${practiceOn ? '?' : ''}" 
-                       value="${practiceOn ? '' : item.e}" 
-                       ${practiceOn ? '' : 'disabled'} 
-                       oninput="checkLive(this, '${item.e}', 'st${index}')"
-                       autocomplete="off" spellcheck="false">
-                <div class="status-icon" id="st${index}"></div>
-                <button class="btn-mini" style="background:#eee; color:black;" onclick="toggleEye('eye${index}')">👁️</button>
-                <div class="eye-text" id="eye${index}" style="grid-column: 1 / span 5; margin-left: 10px;">${item.e}</div>
-            </div>`;
-        });
-        listCont.innerHTML = html;
+                <input type="text" id="inp${i}" placeholder="${practiceOn ? '?' : ''}" value="${practiceOn ? '' : item.e}" ${practiceOn ? '' : 'disabled'} oninput="checkLive(this, '${item.e}', 'st${i}')" autocomplete="off">
+                <div id="st${i}" style="width:20px"></div>
+                <button class="btn-mini" onclick="alert('La paraula és: ${item.e}')">👁️</button>
+            </div>
+        `).join('');
     }
 
-    function checkLive(el, correct, statusId) {
-        const val = el.value.toLowerCase().trim();
-        const st = document.getElementById(statusId);
-        if(val === "") { st.innerHTML = ""; el.style.borderColor = "#ccc"; return; }
-        if(val === correct.toLowerCase()) {
-            st.innerHTML = "✅";
-            el.style.borderColor = "green";
-        } else {
-            st.innerHTML = "❌";
-            el.style.borderColor = "red";
-        }
+    function checkLive(el, cor, sid) {
+        const st = document.getElementById(sid);
+        if(el.value.toLowerCase().trim() === cor.toLowerCase()) { st.innerHTML="✅"; el.style.borderColor="green"; }
+        else { st.innerHTML="❌"; el.style.borderColor="red"; }
     }
 
-    function toggleEye(id) {
-        const el = document.getElementById(id);
-        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
-    }
-
-    // --- LOGICA JOC ---
     function startGame(m) {
         mode = m; queue = []; curIdx = 0; mistakes = 0; matches = 0;
-        
-        // Només categories actives
-        const filteredVocab = vocab.filter(v => activeCats.includes(v.c));
-        
-        if(filteredVocab.length === 0) {
-            alert("Activa algun tema a Configuració!");
-            goToScreen('config');
-            return;
-        }
+        const filtered = vocab.filter(v => activeCats.includes(v.c));
+        if(filtered.length === 0) return goToScreen('config');
 
-        filteredVocab.forEach(cat => {
+        filtered.forEach(cat => {
             let shuf = [...cat.w].sort(() => 0.5 - Math.random());
             queue.push(...shuf.slice(0, Math.min(limit, shuf.length)));
         });
@@ -330,20 +237,17 @@
         document.getElementById('fb').innerHTML = "";
         
         let h = `<h3>"${item.k}"</h3>`;
-        if(mode === 1) {
-            h += `<input type="text" id="ai" autocomplete="off" spellcheck="false"><br><button class="primary" onclick="check(document.getElementById('ai').value)">Enviar</button>`;
+        if(mode === 1 || mode === 3) {
+            h += `<input type="text" id="ai" autocomplete="off"><br><button class="primary" onclick="check(document.getElementById('ai').value)">Ok</button>`;
+            if(mode === 3) speak(item.e);
         } else if(mode === 2) {
             let opts = [item.e];
+            let allW = vocab.flatMap(v => v.w.map(word => word.e)); // Tots per tenir distractors
             while(opts.length < 4) {
-                let rCat = vocab[Math.floor(Math.random()*vocab.length)];
-                let r = rCat.w[Math.floor(Math.random()*rCat.w.length)].e;
+                let r = allW[Math.floor(Math.random()*allW.length)];
                 if(!opts.includes(r)) opts.push(r);
             }
-            opts.sort(() => 0.5 - Math.random());
-            opts.forEach(o => h += `<button onclick="check('${o}')">${o}</button>`);
-        } else if(mode === 3) {
-            h = `<button style="font-size:2.5rem; width:100px; height:100px; border-radius:50%" onclick="speak('${item.e}')">🔊</button><br><br><input type="text" id="ai" autocomplete="off" spellcheck="false"><br><button class="primary" onclick="check(document.getElementById('ai').value)">Comprovar</button>`;
-            speak(item.e);
+            opts.sort(() => 0.5 - Math.random()).forEach(o => h += `<button onclick="check('${o}')">${o}</button>`);
         }
         cont.innerHTML = h;
         if(document.getElementById('ai')) document.getElementById('ai').focus();
@@ -352,18 +256,17 @@
     function check(u) {
         const it = queue[curIdx];
         if(u.toLowerCase().trim() === it.e.toLowerCase()) {
-            document.getElementById('fb').innerHTML = "<span style='color:green'>✅ CORRECTE!</span>";
-            setTimeout(() => { curIdx++; drawQuest(); }, 800);
+            document.getElementById('fb').innerHTML = "✅ CORRECTE!";
+            setTimeout(() => { curIdx++; drawQuest(); }, 600);
         } else {
             mistakes++;
-            document.getElementById('fb').innerHTML = `<span style='color:red'>❌ Era: ${it.e}</span>`;
-            setTimeout(() => { curIdx++; drawQuest(); }, 1500);
+            document.getElementById('fb').innerHTML = `❌ Era: ${it.e}`;
+            setTimeout(() => { curIdx++; drawQuest(); }, 1200);
         }
     }
 
     function drawMatch() {
         const cont = document.getElementById('gCont');
-        document.getElementById('prog').innerText = `0 / ${queue.length}`;
         let ca = queue.map(i => ({t:i.k, id:i.e})).sort(() => 0.5-Math.random());
         let en = queue.map(i => ({t:i.e, id:i.e})).sort(() => 0.5-Math.random());
         let h = '<div class="matching-container"><div>';
@@ -383,8 +286,7 @@
             if(s1.id === s2.id) {
                 s1.el.classList.add('correct'); s2.el.classList.add('correct');
                 matches++; s1=null; s2=null;
-                document.getElementById('prog').innerText = `${matches} / ${queue.length}`;
-                if(matches === queue.length) setTimeout(endG, 800);
+                if(matches === queue.length) setTimeout(endG, 600);
             } else {
                 mistakes++; document.getElementById('errs').innerText = `❌: ${mistakes}`;
                 let a=s1.el, b=s2.el;
@@ -396,47 +298,22 @@
 
     function speak(t) { 
         const m = new SpeechSynthesisUtterance(t); 
-        m.lang = 'en-GB'; m.rate = 0.9; window.speechSynthesis.speak(m); 
+        m.lang = 'en-GB'; window.speechSynthesis.speak(m); 
     }
 
     function endG() {
-        const total = queue.length;
-        const allowed = Math.floor(total / 6);
-        let wonList = [];
-        if (mistakes <= allowed) {
+        const allowed = Math.floor(queue.length / 5);
+        let won = (mistakes <= allowed);
+        if(won) {
             let available = [];
-            for (let i = 1; i <= 151; i++) { if (!unlocked.includes(i)) available.push(i); }
-            if (available.length > 0) {
-                let newId = available[Math.floor(Math.random() * available.length)];
-                unlocked.push(newId);
-                wonList.push({ id: newId, isNew: true });
-            }
-            if (mistakes === 0) {
-                for (let i = 0; i < 2; i++) {
-                    let rid = Math.floor(Math.random() * 151) + 1;
-                    let isN = !unlocked.includes(rid);
-                    if (isN) unlocked.push(rid);
-                    wonList.push({ id: rid, isNew: isN });
-                }
+            for(let i=1; i<=151; i++) if(!unlocked.includes(i)) available.push(i);
+            if(available.length > 0) {
+                let id = available[Math.floor(Math.random()*available.length)];
+                unlocked.push(id);
+                localStorage.setItem('eng_v12_unl', JSON.stringify(unlocked));
             }
         }
-        localStorage.setItem('eng_v12_unl', JSON.stringify(unlocked));
-        let h = `<h2>${mistakes <= allowed ? '🌟 Excel·lent!' : '☁️ Continua practicant'}</h2>`;
-        h += `<p>Errors: ${mistakes} (Màxim: ${allowed})</p>`;
-        if (wonList.length > 0) {
-            h += `<div class="won-list">`;
-            wonList.forEach(item => {
-                let n = String(item.id).padStart(3, '0');
-                h += `<div class="sticker-won">
-                    ${item.isNew ? '<div class="new-badge">NEW</div>' : ''}
-                    <img src="recompenses/${n}.png" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZGRkIi8+PC9zdmc+'">
-                </div>`;
-            });
-            h += `</div>`;
-        }
-        h += `<button class="primary" onclick="openAlbum()">Veure Àlbum 📸</button>`;
-        h += `<button onclick="goToScreen('menu')">Menú Principal 🏠</button>`;
-        document.getElementById('gCont').innerHTML = h;
+        document.getElementById('gCont').innerHTML = `<h2>${won ? '🌟 Molt Bé!' : '☁️ Torna-ho a provar'}</h2><p>Errors: ${mistakes}</p><button onclick="goToScreen('menu')">Tornar</button>`;
     }
 
     function openAlbum() { goToScreen('album'); drawAlb(); }
@@ -447,35 +324,19 @@
             let isU = unlocked.includes(i);
             let d = document.createElement('div');
             d.className = `sticker ${isU?'':'locked'}`;
-            d.onclick = () => { if(isAdmin) { if(isU) unlocked.splice(unlocked.indexOf(i),1); else unlocked.push(i); drawAlb(); } };
+            if(isAdmin) d.onclick = () => { if(isU) unlocked.splice(unlocked.indexOf(i),1); else unlocked.push(i); drawAlb(); };
             if(isU) {
                 let n = String(i).padStart(3, '0');
-                d.innerHTML = `<img src="recompenses/${n}.png" onerror="this.parentElement.innerHTML='🖼️<br>${n}'">`;
-            } else { d.innerHTML = `<span style="z-index:1; position:relative;">${i}</span>`; }
+                d.innerHTML = `<img src="recompenses/${n}.png" onerror="this.parentElement.innerText='${n}'">`;
+            } else { d.innerText = i; }
             g.appendChild(d);
         }
     }
 
     function enterAdmin() {
-        if(prompt("Password:") === "Tercer2026") {
-            isAdmin = true;
-            document.getElementById('album').classList.add('admin-editing');
-            document.getElementById('btnSaveAdmin').style.display = 'block';
-            document.getElementById('aCtrl').style.display = 'none';
-            document.getElementById('aTitle').innerText = "🔧 EDITANT";
-            drawAlb();
-        }
+        if(prompt("Password:") === "Tercer2026") { isAdmin = true; document.getElementById('btnSaveAdmin').style.display = 'block'; drawAlb(); }
     }
-
-    function exitAdmin() {
-        isAdmin = false;
-        localStorage.setItem('eng_v12_unl', JSON.stringify(unlocked));
-        document.getElementById('album').classList.remove('admin-editing');
-        document.getElementById('btnSaveAdmin').style.display = 'none';
-        document.getElementById('aCtrl').style.display = 'block';
-        document.getElementById('aTitle').innerText = "El meu Àlbum 🏆";
-        drawAlb();
-    }
+    function exitAdmin() { isAdmin = false; localStorage.setItem('eng_v12_unl', JSON.stringify(unlocked)); document.getElementById('btnSaveAdmin').style.display = 'none'; drawAlb(); }
 </script>
 </body>
 </html>
