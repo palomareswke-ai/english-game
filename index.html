@@ -52,6 +52,11 @@
         .status-icon { font-size: 1.2rem; width: 20px; text-align: center; }
         .eye-text { font-size: 0.8rem; color: var(--p); font-style: italic; display: none; margin-top: 5px; }
 
+        /* Config Checkboxes */
+        .cat-selector { text-align: left; background: white; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin: 15px auto; width: 85%; }
+        .cat-option { display: flex; align-items: center; margin-bottom: 8px; font-weight: bold; cursor: pointer; }
+        .cat-option input { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--p); }
+
         /* Àlbum i Cromos */
         .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; margin-top: 20px; }
         .sticker { 
@@ -130,7 +135,7 @@
 
     <div id="config" class="screen">
         <h2>Configuració ⚙️</h2>
-        <p>Paraules per tema:</p>
+        <p><strong>Paraules per tema:</strong></p>
         <select id="selLimit" style="padding:12px; font-size:1.2rem; width:80%; border-radius:10px;">
             <option value="1">1 paraula</option>
             <option value="2">2 paraules</option>
@@ -139,7 +144,10 @@
             <option value="8">8 paraules</option>
             <option value="12">12 paraules</option>
         </select>
-        <br><br>
+
+        <p style="margin-top:20px"><strong>Temes actius:</strong></p>
+        <div id="catFilters" class="cat-selector"></div>
+
         <button class="save" onclick="saveConfig()">Guardar Canvis</button>
         <button onclick="goToScreen('menu')">Enrere</button>
     </div>
@@ -185,19 +193,60 @@
 
     let unlocked = JSON.parse(localStorage.getItem('eng_v12_unl')) || [];
     let limit = parseInt(localStorage.getItem('eng_v12_lim')) || 2;
+    // Carregar categories actives o totes per defecte
+    let activeCats = JSON.parse(localStorage.getItem('eng_v12_cats')) || vocab.map(v => v.c);
+    
     let queue = [], curIdx = 0, mistakes = 0, isAdmin = false, mode = 0;
     let s1 = null, s2 = null, matches = 0;
 
     function goToScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        if(id === 'config') document.getElementById('selLimit').value = limit;
+        if(id === 'config') drawConfig();
+    }
+
+    // --- LOGICA CONFIG ---
+    function drawConfig() {
+        document.getElementById('selLimit').value = limit;
+        const cont = document.getElementById('catFilters');
+        cont.innerHTML = vocab.map(cat => `
+            <label class="cat-option">
+                <input type="checkbox" value="${cat.c}" ${activeCats.includes(cat.c) ? 'checked' : ''}>
+                ${cat.c}
+            </label>
+        `).join('');
+    }
+
+    function saveConfig() {
+        limit = parseInt(document.getElementById('selLimit').value);
+        localStorage.setItem('eng_v12_lim', limit);
+        
+        // Recollir categories seleccionades
+        const boxes = document.querySelectorAll('#catFilters input:checked');
+        activeCats = Array.from(boxes).map(b => b.value);
+        
+        if(activeCats.length === 0) {
+            alert("Has de seleccionar almenys un tema!");
+            return;
+        }
+        
+        localStorage.setItem('eng_v12_cats', JSON.stringify(activeCats));
+        goToScreen('menu');
     }
 
     // --- LOGICA REPAS ---
     function openReview() {
         const sel = document.getElementById('revCat');
-        sel.innerHTML = vocab.map(cat => `<option value="${cat.c}">${cat.c}</option>`).join('');
+        // Només mostrar les categories actives
+        const filteredVocab = vocab.filter(v => activeCats.includes(v.c));
+        sel.innerHTML = filteredVocab.map(cat => `<option value="${cat.c}">${cat.c}</option>`).join('');
+        
+        if(filteredVocab.length === 0) {
+            alert("No hi ha temes actius. Ves a Configuració.");
+            goToScreen('config');
+            return;
+        }
+        
         renderReview();
         goToScreen('review');
     }
@@ -206,7 +255,9 @@
         const catName = document.getElementById('revCat').value;
         const practiceOn = document.getElementById('revPrac').checked;
         const listCont = document.getElementById('revList');
-        const data = vocab.find(v => v.c === catName).w;
+        const catData = vocab.find(v => v.c === catName);
+        if(!catData) return;
+        const data = catData.w;
 
         let html = "";
         data.forEach((item, index) => {
@@ -248,18 +299,23 @@
     }
 
     // --- LOGICA JOC ---
-    function saveConfig() {
-        limit = parseInt(document.getElementById('selLimit').value);
-        localStorage.setItem('eng_v12_lim', limit);
-        goToScreen('menu');
-    }
-
     function startGame(m) {
         mode = m; queue = []; curIdx = 0; mistakes = 0; matches = 0;
-        vocab.forEach(cat => {
+        
+        // Només categories actives
+        const filteredVocab = vocab.filter(v => activeCats.includes(v.c));
+        
+        if(filteredVocab.length === 0) {
+            alert("Activa algun tema a Configuració!");
+            goToScreen('config');
+            return;
+        }
+
+        filteredVocab.forEach(cat => {
             let shuf = [...cat.w].sort(() => 0.5 - Math.random());
             queue.push(...shuf.slice(0, Math.min(limit, shuf.length)));
         });
+        
         if(m !== 4) queue.sort(() => 0.5 - Math.random());
         goToScreen('game');
         if(m === 4) drawMatch(); else drawQuest();
